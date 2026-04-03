@@ -1,0 +1,26 @@
+# Typst compilation output
+*.pdf
+*.aux
+
+# Typst cache
+.typst/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Editor directories and files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.bak
+
+# Unpacked Word template (for inspection only)
+tf_template_unpacked/
