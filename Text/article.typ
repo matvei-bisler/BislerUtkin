@@ -148,9 +148,6 @@ Description of statistical methods and software @placeholder_article_e.
   caption: [Table 1 title (_N_ = 0,000)],
 )
 
-#table-note[Explain abbreviations, significance levels (* _p_ < .05;
-** _p_ < .01; \*\*\* _p_ < .001), and data source here.]
-
 == Main analyses
 
 [Table 2 near here]
