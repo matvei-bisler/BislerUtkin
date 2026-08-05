@@ -1,15 +1,14 @@
 # An Agent-Based Model of Moral Entrepreneurship and Moral Panic
 ## Model specification
 
-> **About this document.** This is the complete specification of the model: it can
-> be implemented, run, and reproduced from this text alone. It follows the ODD
-> protocol (Overview, Design concepts, Details; Grimm et al. 2006, 2010, 2020), the
-> standard reporting format for agent-based models, with sections ordered for
-> readability rather than in strict ODD sequence.
+> **About this document.** This is the complete specification of the model: it can be
+> implemented, run, and reproduced from this text alone. It follows the ODD protocol
+> (Overview, Design concepts, Details; Grimm et al. 2006, 2010, 2020), with sections
+> ordered for readability rather than in strict ODD sequence.
 >
-> The model is deliberately small — **six parameters and four rules** — because it
-> exists to establish one claim, not to represent moral panic in full. What it
-> leaves out is stated in §14.1.
+> The model carries **six parameters and four rules**. Four parameters are global; the
+> remaining two, depth and reach, are set per claims-maker, so a run with both actors
+> active fixes eight numbers. What the model leaves out is stated in §14.1.
 
 **ODD crosswalk.**
 
@@ -28,15 +27,21 @@
 
 | Convention | Meaning |
 |---|---|
+| Latin / Greek | Latin letters denote state variables, network structure, and agent-level exposures; Greek letters denote parameters and normalized derived quantities |
 | $i$, $j$ | focal agent and neighbor |
-| $X\in\{D,C\}$ | a generic external actor; $D$ and $C$ always label the two actors (§5) and never denote quantities |
+| $X\in\{D,C\}$ | a generic external actor; $D$ and $C$ always label the two claims-makers (§5) and never denote quantities |
 | $(t)$ | time-varying; symbols without it are fixed for a run |
-| $\bar{\;\cdot\;}$ | population mean, e.g. $\bar\tau(t)=\frac1N\sum_i\tau_i(t)$ |
+| $\bar{\;\cdot\;}$ | population mean, e.g. $\bar a(t)=\frac1N\sum_i a_i(t)$ |
 | $\mathcal N$ | reserved for neighborhoods; the Normal distribution is written out |
-| superscripts on $\bar\tau$ | identify a counterfactual run (§10.1), not an exponent |
-| $\psi$ | the share of an agent's alarm neighborhood contributed by claims-makers. Three related forms: $\psi$ as a mean-field scalar (§3.3), the agent-specific $\psi_i(t)$ (§7.4), and $\psi_0$ evaluated at mean degree in the undiluted specification (§7.4) |
+| superscripts on $\bar a$ | identify a counterfactual run (§10.1), not an exponent |
+| $\psi$ | the share of an agent's alarm neighborhood contributed by claims-makers (§3.3, §7.4) |
 | $W$, $W_{\!h}$ | two distinct hold durations: $W$ for the panic-episode criterion (§10.2), $W_{\!h}$ for the handover criterion (§10.3) |
 | $\mathbf M$ | the row-stochastic neighbor-averaging matrix (§7.3), written $W$ in the DeGroot and Friedkin–Johnsen literature; renamed here because $W$ denotes a hold duration |
+
+One pair needs care because the two appear side by side in the panic criterion of §10.2:
+$\bar a(t)$ is **mean alarm**, a level, while $q(t)$ is the **share of the population in
+the amplifying regime**, a count. They are different quantities and are never abbreviated
+alike.
 
 ---
 
@@ -46,92 +51,124 @@
 
 Moral panic is the central state in a large theoretical literature, and it is almost
 never measured. Reviews of the field repeatedly note that panic is invoked as
-self-evident while criteria for recognizing it go unstated (Falkof 2020; Garland
-2008; Mikhaylova 2020). The concept therefore cannot travel: there is no principled
-way to say that one episode was a panic and another ordinary public concern, or that
-a society crossed from calm into panic at a particular moment.
+self-evident while criteria for recognizing it go unstated (Falkof 2020; Garland 2008;
+Mikhaylova 2020). The concept therefore cannot travel: there is no principled way to say
+that one episode was a panic and another ordinary public concern, or that a society
+crossed from calm into panic at a particular moment.
 
 The obstacle is not technique but the concept. Goode & Ben-Yehuda (1994) define panic
 partly by **disproportion** — reaction in excess of what the situation warrants — and
 disproportion requires a comparison empirical work can rarely make, because the
-counterfactual is unobservable. One cannot observe how alarmed a society would have
-been without the claims-making that alarmed it. Hier (2024) treats this as the
-field's core unsolved problem.
+counterfactual is unobservable. One cannot observe how alarmed a society would have been
+without the claims-making that alarmed it. Hier (2024) treats this as the field's core
+unsolved problem.
 
 ### 1.2 The claim
 
 A simulation can do what a case study cannot: **run the counterfactual.** The same
 population, the same network, the same starting conditions, run with and without the
-claims-making that is supposed to have caused the alarm. The difference is
-disproportion, directly computed.
+claims-making that is supposed to have caused the alarm. The difference is disproportion,
+directly computed.
 
-Doing this makes a second question answerable, and it is the one this paper is about.
-Alarm in the model has two possible sources: it can be injected by claims-makers from
-outside, or generated by the population itself through exposure to moral disagreement.
-Each can be switched off independently, which isolates not only what either contributes
-alone but — the quantity that turns out to matter — the alarm that exists *only* because
-both are present (§10.1). The paper's claim is about that third quantity:
+Doing this makes a second and older question answerable. Alarm in the model has two
+possible sources: it can be injected by claims-makers from outside, or generated by the
+population itself through exposure to moral disagreement. Each can be switched off
+independently, which isolates not only what either contributes alone but — the quantity
+that turns out to matter — the alarm that exists *only* because both are present (§10.1).
+The paper's claim is about that third quantity:
 
 > **A moral panic is ignited by claims-makers but sustained by the population they
 > divide.**
 
-If true, this reframes what moral entrepreneurship accomplishes. The entrepreneur's
-achievement is not to hold a population in a state of alarm — it is to divide the
-population far enough that alarm becomes self-sustaining, after which the entrepreneur
-is no longer required. It also explains why panics are so hard to end: withdrawing the
-claims-making that started one does not remove what is now keeping it going.
+This is a numerical answer to a standing dispute. Whether panics are held up by elite
+claims-makers or by the reaction of the public itself divides elite-driven from
+interactionist accounts, and the argument has been conducted rhetorically because there
+was no way to apportion the two. The four-run decomposition apportions them.
+
+**The claim is an apportionment, not a chronology, and the distinction is not pedantic.**
+"Ignited … but sustained" invites the reading that the entrepreneur holds the episode up for a
+while and is then relieved by the population. That is not what the model does: where a
+campaign is intense enough to divide at all, it divides on contact, and the endogenous term
+dominates from the second step onward (§13, H2). What the decomposition establishes is that
+the overwhelming majority of the manufactured alarm is attributable to division the
+entrepreneur created rather than to the signal it emitted, and that the alarm outlives the
+signal. Both halves of the sentence are supported in that sense; neither licenses a story
+about phases.
+
+If the claim holds, it also reframes what moral entrepreneurship accomplishes. The
+entrepreneur's achievement is not to hold a population in a state of alarm but to divide
+it far enough that alarm becomes self-sustaining, after which the entrepreneur is no
+longer required. That is also why panics are hard to end: withdrawing the claims-making
+that started one does not remove what is now keeping it going.
 
 **Research question.** *Which claims-making strategies ignite moral panic, under which
 network structures; and once ignited, what sustains it?*
 
-The model is built to answer exactly this, and no more. Every parameter in §3 is
-tested by one of the three hypotheses in §13.
+The model is built to answer exactly this, and no more. Every parameter in §3 is tested
+by one of the three hypotheses in §13.
 
 ### 1.3 The model in plain language
 
-A population is connected in a social network. Each person holds two things at once:
-a **moral position** on a contested issue, running from full support of the dominant
-claim to full support of the position that claim stigmatizes; and a level of **alarm**
-— how much danger they feel is in the air.
+A population is connected in a social network. Each person holds two things at once: a
+**moral position** on a contested issue, running from full support of the dominant claim
+to full support of the position that claim stigmatizes; and a level of **alarm**, how
+much danger they feel is in the air.
 
-Positions change in three ways. People drift toward neighbors whose views are close
-enough to still be worth listening to, and simply tune out those whose views are too
-far away. They are pulled toward whichever of two rival claims-makers reached them
-that round. And throughout, they remain partly anchored to the conviction they began
-with, so no one is ever fully remade by their surroundings.
+Positions change in two ways. People drift toward neighbors whose views are close enough
+to still be worth listening to, and simply tune out those whose views are too far away.
+And they are pulled toward whichever of two rival claims-makers reached them that round.
+A third term is available, an anchor holding each person partly to the conviction they
+began with, but it is set to zero at the operating point for a reason given in §3.2: it
+is a restoring force toward the state before the campaign, and it erases exactly the
+division this paper is about.
 
-Alarm works differently. Alarm is **caught, not reasoned into**. It rises with the
-alarm of the people around you, and it rises with sheer exposure to moral disagreement
-— being surrounded by people you consider wrong is itself experienced as danger. It
-then fades slowly rather than at once.
+Alarm works differently. Alarm is **caught, not reasoned into**. It rises with the alarm
+of the people around you, and it rises with sheer exposure to moral disagreement, so that
+being surrounded by people you consider wrong is itself experienced as danger. It then
+fades slowly rather than at once.
 
-Putting the two together produces the model's central asymmetry: **the morally distant
-do not persuade you, they frighten you.** A neighbor beyond your tolerance cannot move
-your position at all, and contributes the most to your alarm. So a population that has
-been sorted into opposed camps manufactures its own alarm, with no further help from
-anyone.
+Putting the two together produces the model's central asymmetry: **the morally distant do
+not persuade you, they frighten you.** A neighbor beyond your tolerance cannot move your
+position at all, and contributes the most to your alarm. So a population that has been
+sorted into opposed camps manufactures its own alarm, with no further help from anyone.
 
-Two claims-makers push at this system from outside — one promoting the dominant moral
-claim, one defending the position it stigmatizes. Neither is inside the network;
-neither can be alarmed. Everyone else simply reacts. Panic, where it appears, is
-something the population does to itself, which is what makes the counterfactual of §10
-meaningful.
+Two claims-makers push at this system from outside: one promoting the dominant moral
+claim, one defending the position it stigmatizes. Neither is in the network; neither can
+itself be alarmed. Everyone else simply reacts. Panic, where it appears, is something the
+population does to itself, which is what makes the counterfactual of §10 meaningful.
 
 ### 1.4 Patterns used to judge adequacy
 
-The model is theoretical, not calibrated, so its adequacy is judged against
-qualitative patterns rather than point predictions. It is adequate if, within a
-non-degenerate region of parameter space, it reproduces all three of:
+The model is theoretical, not calibrated, so its adequacy is judged against qualitative
+patterns rather than point predictions. It is adequate if, within a non-degenerate region
+of parameter space, it reproduces all three of:
 
-1. a **non-linear, cascade-shaped** rise in alarm rather than smooth linear diffusion
-   (Granovetter 1978; Centola & Macy 2007);
-2. **containment** — escalation failing under at least some structures and strategies,
-   so escalation is not an artifact of a model that always escalates;
+1. **amplification** — the response exceeds the forcing, so that a claims-maker
+   reaching a share $\rho$ of the population produces disproportion $\Pi>\rho$
+   (Granovetter 1978; Centola & Macy 2007). This, and not a discontinuity, is the
+   model's formal counterpart of a reaction out of proportion to its cause.
+   **The pattern is a property of a claims-maker with a stable audience, not of
+   claims-making as such**: a repertoire that resamples its audience every step
+   never crosses $\Pi=\rho$ at any reach, because it converts the population
+   instead of dividing it (§7.1, H1). The requirement is therefore that
+   amplification appear for *some* repertoire, not for every one — and the
+   repertoires for which it fails are as much a result as those for which it holds;
+2. **containment** — escalation failing under at least some structures and strategies, so
+   escalation is not an artifact of a model that always escalates;
 3. **alarm that outlives its cause** — episodes remaining above the counterfactual
-   baseline after every external actor has withdrawn.
+   baseline after the entrepreneur has withdrawn.
 
 Failure to reproduce all three jointly indicates a structural rather than a parametric
 problem.
+
+**All three are reproduced, and the second is reproduced more thoroughly than intended.**
+Containment was written as a modest requirement — that escalation fail *somewhere*, so that
+escalation is not an artifact of a model that always escalates. What the runs show is that it
+fails under three separable conditions, each of which turns out to be a result in its own
+right: when the claims-making is too shallow to break bounded confidence, when its audience is
+resampled rather than fixed, and when its reach is total. The first two are the gates recorded
+under H1, and the third is the self-limiting property of broadcast. The model does not merely
+fail to always escalate; it identifies what has to be true before it can.
 
 ---
 
@@ -147,34 +184,35 @@ The model contains $N$ agents, a fixed network, and two external claims-makers.
 * $b_i = +1$: full alignment with the **dominant** moral claim;
 * intermediate values: partial alignment or neutrality.
 
-**Alarm** $\;\tau_i(t) \in [0, 1]$
+**Alarm** $\;a_i(t) \in [0, 1]$
 
-* $\tau_i = 0$: no perceived threat;
-* $\tau_i = 1$: maximal perceived social danger.
+* $a_i = 0$: no perceived threat;
+* $a_i = 1$: maximal perceived social danger.
 
-> $\tau$ is written with a Greek letter to avoid collision with the time index. It
-> operationalizes the perceived danger the literature identifies as the engine of panic
-> (Cohen 1994; Goode & Ben-Yehuda 1994).
+> Alarm operationalizes the perceived danger the literature identifies as the engine of
+> panic (Cohen 1994; Goode & Ben-Yehuda 1994).
 >
-> $\tau$ is **undirected**: it records *how* alarmed someone is, not *what* they fear.
-> The object is read off jointly with $b_i$ — an alarmed agent near $+1$ fears the
-> stigmatized position, one near $-1$ fears persecution. §14.1 states what this costs.
+> It is **undirected**: it records *how* alarmed someone is, not *what* they fear. The
+> object is read off jointly with $b_i$ — an alarmed agent near $+1$ fears the stigmatized
+> position, one near $-1$ fears persecution. §14.1 states what this costs.
 
 ### 2.2 Fixed agent attributes
 
 | Symbol | Meaning | Domain |
 |---|---|---|
-| $\theta_i$ | panic threshold — how much perceived danger it takes before this person begins amplifying | $[0,1]$ |
+| $\theta_i$ | panic threshold — how much alarm it takes before this person begins amplifying | $[0,1]$ |
 | $b_i(0)$ | initial position, retained for the rest of the run as the agent's anchor | $[-1,1]$ |
 
 Both vary across agents, but only $\theta_i$ is a **trait**: it governs how the agent
 responds, and it is the model's only such trait. $b_i(0)$ is an initial condition that
 happens to be retained, not a rule of behavior.
 
-Threshold *dispersion* is the entire content of the Granovetter (1978) threshold
-model: the mean threshold tells you almost nothing about what a crowd will do, while
-the shape of the distribution tells you nearly everything. It is what makes the abrupt
-transitions of H1 possible, which is why it is the one form of heterogeneity retained.
+Threshold *dispersion* is the entire content of the Granovetter (1978) threshold model:
+the mean threshold tells you almost nothing about what a crowd will do, while the shape of
+the distribution tells you nearly everything. Here it sets **how much of the population
+amplifies at a given level of alarm**, and that share is the gain of the reinforcement loop
+in §7.4. Flattening the distribution to a constant therefore changes the gain, not merely
+the variance, which is why it is the one form of heterogeneity retained.
 
 ### 2.3 Derived quantities
 
@@ -184,23 +222,25 @@ transitions of H1 possible, which is why it is the one form of heterogeneity ret
 | $d_i = \lvert\mathcal N_i\rvert$ | degree of $i$ |
 | $\Delta_{ij}(t) = \lvert b_i(t)-b_j(t)\rvert \in [0,2]$ | moral distance between $i$ and $j$ |
 | $g^X_i(t)\in\{0,1\}$ | $1$ iff actor $X$ reaches agent $i$ at step $t$ (§7.1) |
-| $m_i(t) = g^D_i(t)+g^C_i(t) \in \{0,1,2\}$ | number of claims-makers reaching $i$ this step |
-| $a_i(t) = \mathbf 1[\tau_i(t) > \theta_i]$ | activation indicator |
-| $\kappa_i(t) = 1 + (\gamma-1)\,a_i(t)$ | social weight ($=\gamma$ if activated, else $1$) |
-| $\bar a(t) = \frac1N\sum_i a_i(t)$ | activated fraction |
+| $m_i(t)=g^D_i(t)+g^C_i(t)\in\{0,1,2\}$ | number of claims-makers reaching $i$ this step |
+| $\kappa_i(t)=\begin{cases}\gamma,& a_i(t)>\theta_i\\ 1,&\text{otherwise}\end{cases}$ | social weight: an agent past its threshold is heard $\gamma$ times as loudly |
+| $q(t)=\frac1N\sum_i\mathbf 1[a_i(t)>\theta_i]$ | share of the population in the amplifying regime |
 
-$\kappa_j$ is a property of the **source** $j$ alone: an activated agent is louder to
-all its neighbors equally. There is no dyad-specific tie strength.
+Activation has no symbol of its own: it is the condition $a_i(t)>\theta_i$ inside the
+definition of $\kappa_i$, and the only quantity that needs reporting is its population
+share $q(t)$.
+
+$\kappa_j$ is a property of the **source** $j$ alone: an amplifying agent is louder to all
+its neighbors equally. There is no dyad-specific tie strength.
 
 ### 2.4 Scales
 
-* **Time** is discrete and dimensionless. One step is one round of communicative
-  exposure; a run lasts $T$ steps. Results are read ordinally — faster/slower,
-  earlier/later — never as days or weeks.
+* **Time** is discrete and dimensionless. One step is one round of communicative exposure;
+  a run lasts $T$ steps. Results are read ordinally — faster/slower, earlier/later — never
+  as days or weeks.
 * **Space** does not exist. The only distance is geodesic distance on the network.
-* **Population.** $N$ is a modeling choice, not an empirical target. Because hub
-  targeting is degree-dependent, principal findings are checked at
-  $N\in\{500,1000,2000\}$.
+* **Population.** $N$ is a modeling choice, not an empirical target. Sensitivity of the
+  headline results to $N$ is checked in the appendix (§12.3).
 
 ---
 
@@ -216,85 +256,168 @@ The groups say what each parameter belongs to; §13 says which hypothesis tests 
 | **How alarm behaves** | $\mu$ | how long alarm lingers after the alarming stops *(memory)* | $[0,1)$ | H2 |
 | | $\delta$ | how much alarm is caught from others *(contagion)* | $[0,1]$ | H2 |
 | | $\omega$ | how much mere disagreement is itself experienced as danger *(othering)* | $[0,1]$ | H2 |
-| **The claims-makers** | $\alpha_{D},\alpha_{C}$ | how hard each pushes the people it reaches *(depth)* | $[0,1]$ | H1, H3 |
-| | $\rho_{D},\rho_{C}$ | what share of the population each reaches per step *(reach)* | $[0,1]$ | H1, H3 |
+| **The claims-makers** | $\alpha_D,\alpha_C$ | how hard each pushes the people it reaches *(depth)* | $[0,1]$ | H1, H3 |
+| | $\rho_D,\rho_C$ | what share of the population each reaches per step *(reach)* | $[0,1]$ | H1, H3 |
 
 The middle group is not a list of ingredients but a contest. **Memory, contagion, and
-othering are the three candidate answers to "what sustains a panic," and H2 is the
-claim that the third wins.** They are kept separate for exactly that reason.
+othering are the three candidate answers to "what sustains a panic," and H2 is the claim
+that the third wins.** They are kept separate for exactly that reason, and §12.2 tests
+them against each other at equal total intensity.
 
 Depth and reach are kept separate so a fringe actor (pushes hard, reaches few) is
 distinguishable from an established one (reaches widely at modest intensity).
-**Institutional legitimacy is represented as a high $\rho$**, not as a coefficient of
-its own — legitimacy's empirical content is differential access to an audience.
+**Institutional legitimacy is represented as a high $\rho$**, not as a coefficient of its
+own — legitimacy's empirical content is differential access to an audience.
 
-The two actors are never both active except in Experiment C (§12.1): $D$ acts alone in
-Experiments A and B, and $C$ enters only as $D$ withdraws. Where the text writes
-$\alpha$ and $\rho$ without a subscript, it refers to the currently active actor.
+The two actors are active at different times rather than together: $D$ acts alone in
+Experiments A and B, and $C$ enters only as $D$ withdraws (§12.1). The subscript is always
+written, so that which actor a quantity belongs to is never left to context.
 
 **Silencing an actor.** An actor is **silent** when $\rho_X=0$. Then $n_X=0$,
-$g^X_i(t)\equiv0$, the actor contributes nothing to $m_i$, and it acts through neither
-channel. Setting $\alpha_X=0$ instead is **not** equivalent and must not be used for
-this purpose: $\alpha_X$ scales only the position channel (§7.3), while a targeted
-agent still counts the actor as a maximally alarmed contact in $A_i$ (§7.4). An actor
-with $\alpha_X=0$ and $\rho_X>0$ persuades no one and alarms everyone it reaches.
+$g^X_i(t)\equiv0$, it contributes nothing to $m_i$, and it acts through neither channel.
+Setting $\alpha_X=0$ instead is **not** equivalent and must not be used for this purpose:
+$\alpha_X$ scales only the position channel (§7.3), while a targeted agent still counts
+the actor as a maximally alarmed contact in $E_i$ (§7.4). An actor with $\alpha_X=0$ and
+$\rho_X>0$ persuades no one and alarms everyone it reaches.
 
 ### 3.2 Three fixed constants
 
 | Symbol | Meaning | Default | Why fixed |
 |---|---|---|---|
-| $\sigma$ | anchoring to initial conviction | $0.2$ | Governs how fast positions move, not whether panic occurs, so no hypothesis needs it swept. It is fixed *above* zero rather than at zero because $\sigma>0$ supplies the self-weight that guarantees convergence (§7.3). |
-| $\gamma$ | how much louder an activated agent is | $3.0$ | Substitutable with the threshold distribution in generating cascades; fixing it keeps $\theta_i$ as the single locus of the tipping mechanism. |
-| $\zeta$ | s.d. of idiosyncratic noise on positions | $0.01$ | Belongs to no hypothesis; its only role is to prevent structurally frozen states. |
+| $\sigma$ | anchoring to initial conviction | $0$ | Not neutral with respect to H2: see the caution below. It stays a constant rather than a parameter only because bounded confidence already does the work §11 attributes to it. |
+| $\gamma$ | how much louder an amplifying agent is | $3.0$ | Substitutable with the threshold distribution in generating cascades; fixing it keeps $\theta_i$ as the single locus of the tipping mechanism. |
+| $\zeta$ | s.d. of idiosyncratic noise on positions | $0.01$ | Prevents structurally frozen states — but at $\sigma=0$ that is not a neutral service, and the caution below applies to it as well as to $\sigma$. |
 
-All three are varied in the sensitivity analysis (§12.3) to confirm no conclusion turns
-on their values. $N$ (agents) and $T$ (steps per run) are design constants, not
-parameters.
+Each is replicated at two alternative values on the headline settings (§12.3) to confirm
+no conclusion turns on where it was fixed. $N$ (agents) and $T$ (steps per run) are design
+constants, not parameters.
+
+**Caution: the anchor is a restoring force, and it dissolves manufactured division.** The
+term $\sigma b_i(0)$ pulls every agent back toward its *pre-campaign* position. Under the
+consensual default those positions all sit near zero, so once the entrepreneur withdraws the
+anchor returns the population to consensus and whatever division the campaign created
+disappears. Inside a homogeneous cluster the peer pull vanishes, the update reduces to
+$b_i(t+1)\approx\sigma b_i(0)+(1-\sigma)b_i(t)$, and the return is geometric at rate
+$1-\sigma$, with relaxation time $-1/\ln(1-\sigma)$ steps.
+
+Post-withdrawal persistence is therefore governed by $\sigma$ rather than by $\omega$, which
+is the reverse of H2. In pilot runs (regenerable via the reproduction script shipped with
+the code, §15) the measured persistence tracks $-1/\ln(1-\sigma)$: roughly $14$, $9$ and
+$4$–$5$ steps at $\sigma=0.05,0.10,0.20$ against predicted $20$, $10$ and $5$, while at
+$\sigma=0$ persistence is censored at the end of every run and the interaction term and
+the bimodality of positions are still undiminished hundreds of steps after withdrawal. At
+$\sigma=0$ bounded confidence is absorbing: clusters separated by more than $\epsilon$ can
+never re-merge, division is permanent, and $\Pi$ decays to the positive floor H2 predicts.
+
+Two courses are available, and the choice has to be made before the program runs. Either
+$\sigma=0$, the default above, since bounded confidence already prevents the trivial
+consensus that §11 credits to the anchor; or $\sigma$ becomes a seventh swept parameter and
+enters §12.2 alongside the three alarm parameters. What is not available is fixing $\sigma$
+at a positive value and leaving it out of the analysis, which would apportion persistence
+among $\mu,\delta,\omega$ while a constant outside the analysis controlled it.
+
+**The same caution applies to $\zeta$, which is why the table above no longer calls it
+inert.** At $\sigma=0$ bounded confidence is absorbing and the permanence of division *is* a
+structurally frozen state — precisely the thing $\zeta$ exists to prevent. Noise therefore
+competes with $\omega$ to explain persistence by the same route the anchor does: a position
+that random-walks back across the tolerance boundary re-enters its neighbours' audible range,
+and clusters that bounded confidence had separated permanently can re-merge. Measured on the
+headline setting, $\Pi$ 250 steps after withdrawal is $0.213$ at $\zeta=0$, $0.178$ at
+$\zeta=0.01$ and $0.024$ at $\zeta=0.05$: a value five times the default destroys the effect
+H2 is about.
+
+A three-point bracket is weaker than the standard this section applies to $\sigma$, so
+**$\zeta$ enters §12.2 as a fourth independent input** and the justification below is a
+measurement rather than an assertion. Over $\zeta\in[0,0.02]$ — zero to twice the default —
+the split carries total Sobol index $1.00$ on persistence against $0.02$ for $\zeta$: noise
+is irrelevant and H2's claim is unaffected. Over $\zeta\in[0,0.05]$ the ordering **reverses**,
+$0.39$ for the split against $0.75$ for $\zeta$. The crossover therefore lies between twice
+and five times the default.
+
+This fixes $\zeta=0.01$ with a stated scope condition rather than by fiat, and the condition
+must travel with the hypothesis: **H2's claim that persistence is governed by othering holds
+for $\zeta\lesssim0.02$ and fails above it.** That is a real limit on the result, not a
+technicality — it says the permanence of manufactured division depends on agents not drifting
+back across the tolerance boundary, which is a substantive assumption about how noisy moral
+positions are. Handover time is untouched by $\zeta$ in both boxes ($S_T\le0.03$), so what
+noise governs is what *survives*, not when the transfer happens.
 
 ### 3.3 Range and stability
 
-**(C1) Alarm stays in range.** Since $A_i,\Phi_i\in[0,1]$ and all three terms of the
-alarm update are non-negative, $\mu+\delta+\omega\le1$ implies $\tau_i(t)\in[0,1]$ for
-all $t$ by induction from $\tau_i(0)\in[0,1]$, so the clip in §7.4 never binds.
-Violating C1 is permitted, but the fraction of agent-steps at $\tau=1$ must then be
-reported.
+**(C1) Alarm stays in range.** $\Phi_i\in[0,1]$ by construction, and $E_i\in[0,1]$ by the
+cap written into its definition (§7.4). All three terms of the alarm update are
+non-negative, so $\mu+\delta+\omega\le1$ implies $a_i(t)\in[0,1]$ for all $t$ by induction
+from $a_i(0)\in[0,1]$, and the outer clip on the alarm update never binds. The cap
+*inside* $E_i$ is a different matter: it is part of the definition, it does bind where
+alarmed, amplifying neighborhoods are dense, and that saturation is the nonlinearity C3
+polices. C1 is imposed by construction on every sampled parameter vector (§12.2), not
+checked after the fact.
 
-**(C2) Contagion must be sub-critical.** For an agent of degree $d$ whose neighbors sit
-at mean alarm $\bar\tau$ with mean weight $\bar\kappa$, reached by $m$ claims-makers,
-write
+**(C2) Contagion must be sub-critical in the calm regime.** For an agent of degree $d$
+whose neighbors are below threshold ($\kappa_j=1$; the amplifying regime is C3's
+subject), reached by $g\in\{0,1,2\}$ claims-makers, write
 
-$$\psi = \frac{\gamma m}{d\bar\kappa+\gamma m}$$
+$$\psi = \frac{g}{d+g}$$
 
-for the share of its alarm neighborhood contributed by claims-makers (§7.4). Then
-$A_i\approx(1-\psi)\bar\tau+\psi$, and the recursion linearizes to
+for the share of its alarm neighborhood contributed by claims-makers (§7.4). Where the
+cap in $E_i$ does not bind, $E_i\approx(1-\psi)\bar a+\gamma\psi$, and the recursion
+linearizes to
 
-$$\bar\tau(t+1)\approx\bigl(\mu+\delta(1-\psi)\bigr)\bar\tau(t)+\delta\psi+\omega\bar\Phi,
+$$\bar a(t+1)\approx\bigl(\mu+\delta(1-\psi)\bigr)\bar a(t)+\delta\gamma\psi+\omega\bar\Phi,
 \qquad
-\bar\tau^{*}=\frac{\delta\psi+\omega\bar\Phi}{1-\mu-\delta(1-\psi)}.$$
+\bar a^{*}=\frac{\delta\gamma\psi+\omega\bar\Phi}{1-\mu-\delta(1-\psi)}.$$
 
-Since $\delta(1-\psi)\le\delta$, the condition $\mu+\delta<1$ is sufficient for
-sub-criticality, and it is the meaningful constraint: if $\mu+\delta\ge1$, alarm runs
-to the ceiling for any positive input and every parameter setting escalates trivially.
-$\bar\tau^{*}$ is the analytic benchmark used in verification (§12.3).
+Since $\delta(1-\psi)\le\delta$, the condition $\mu+\delta<1$ makes the calm regime
+sub-critical, and it is the meaningful floor: if $\mu+\delta\ge1$, alarm runs to the
+ceiling for any positive input before any agent amplifies, and every parameter setting
+escalates trivially. $\bar a^{*}$ is the analytic benchmark used in verification (§12.3,
+limit 4, which docks at $\gamma=1$ on a regular graph, where the linearization is exact up
+to the mean-field approximation).
 
-Note that $\psi$ falls with degree: **the well-connected are harder to alarm by
-claims-making alone**, because a claims-maker is one voice among many for a hub and
-nearly the whole world for an isolate. This is a consequence of §7.4 and is tested
-under H1.
+**(C3) Contagion must stay below the reinforcement threshold.** C2 bounds the gain of the
+calm regime, but the reinforcing form of $E_i$ (§7.4) raises it once agents amplify: an
+amplifying neighbor contributes $\kappa_j=\gamma$ to a numerator divided by the count, so
+the effective coefficient on neighborhood alarm climbs from $\delta$ toward
+$\delta\gamma$. Above a threshold that depends on the *split* between $\mu$ and $\delta$ as
+well as on mean degree and $\gamma$, alarm becomes self-sustaining and settles at
+$a^{*}=\delta/(1-\mu)$ — the fixed point with $E_i$ pinned at its cap — from any positive
+seed, whatever any claims-maker does. In that regime H2 is true for the wrong reason, since
+persistence reflects supercritical contagion rather than othering, and the counterfactual
+decomposition loses its point because alarm no longer depends on the forcing.
 
-**Positions** have no analogous invariant. Without claims-making and noise the update
-is a convex combination of $b_i(0)$, $b_i(t)$, and in-tolerance neighbors, so it stays
-in range on its own; the clip in §7.3 binds only through noise and through
-claims-making that happens to act in the same direction as a strong peer pull. See
-§14.2.
+**The boundary is a surface in the simplex, not a value of $\mu+\delta$, and this matters
+more than it looks.** Once agents amplify, the coefficient on neighborhood alarm is
+$\delta\gamma$ rather than $\delta$, so the two summands are not interchangeable: memory
+contributes at weight one and contagion at weight up to $\gamma$. The relevant scale is
+therefore nearer $\mu+\delta\gamma$ than $\mu+\delta$, and a point with a perfectly
+respectable $\mu+\delta$ can still self-sustain if the mass sits on $\delta$. Measured on the
+$(p_\mu,p_\delta,p_\omega)$ lattice of §12.2 at total intensity $s=0.60$, four of forty-five
+points fail the check, all of them near the $\delta$ vertex and all with $\mu+\delta\le0.60$
+— comfortably inside any bound stated in $\mu+\delta$ alone. **Quoting a scalar threshold is
+therefore not safe**, and the check must be run at every reported point rather than inferred
+from one.
+
+The threshold has no clean closed form, so it is **measured, not asserted**: silence both
+actors, set $\omega=0$, seed a few percent of the population at full alarm, and check that
+alarm dies. At mean degree $10$, $\gamma=3$ and a roughly even split, this puts the boundary
+near $\mu+\delta\approx0.7$; the operating point used throughout ($\mu=0.30,\delta=0.25$)
+passes with a resting mean alarm of $4\times10^{-53}$. Mean degree moves the boundary too, so
+the check is repeated on any network whose density differs from the design — including the
+empirical graphs of §12.3. Every reported cell carries its $\mu+\delta$, its split, and the
+outcome of this check.
+
+**Positions** have no analogous invariant. Without claims-making and noise the update is a
+convex combination of $b_i(0)$, $b_i(t)$, and in-tolerance neighbors, so it stays in range
+on its own; the clip in §7.3 binds only through noise and through claims-making that acts
+in the same direction as a strong peer pull. See §14.2.
 
 ---
 
 ## 4. Network Structure
 
-Agents sit in a **static undirected graph**. Structure is the primary explanatory
-variable in H1. Three generators are used, each isolating one documented feature of
-real social networks, plus one empirical graph.
+Agents sit in a **static undirected graph**. Structure is the primary explanatory variable
+in H1. Three generators are used, each isolating one documented feature of real social
+networks.
 
 * **Watts–Strogatz small-world** (Watts & Strogatz 1998) — short paths with high local
   clustering. The canonical model of a locally dense, globally connected social world.
@@ -302,70 +425,73 @@ real social networks, plus one empirical graph.
   clustering real networks display, which plain Barabási–Albert (1999) lacks. Following
   Broido & Clauset (2019) these are described as **hub-dominated** rather than
   "scale-free," since exact power laws are empirically rarer than once assumed.
-* **Erdős–Rényi random graph** — no clustering, no hubs: the structural null against
-  which the other two are read. (The $G(n,p)$ variant is due to Gilbert 1959; the
-  conventional label is retained.)
+* **Erdős–Rényi random graph** — no clustering, no hubs: the structural null against which
+  the other two are read. (The $G(n,p)$ variant is due to Gilbert 1959; the conventional
+  label is retained.)
 
-**Comparability.** Generators are compared at **matched mean degree**, since otherwise
-a structure effect is confounded with a density effect. Realized mean degree is
-reported.
+**Comparability.** Generators are compared at **matched mean degree**, since otherwise a
+structure effect is confounded with a density effect. Realized mean degree is reported.
 
-**Isolates.** Of the three, only Erdős–Rényi at low density produces isolated nodes.
-The model runs on the **full graph, not the giant component**, because isolation is
-substantively meaningful: an agent reachable only by claims-makers is a real
-sociological position, and §3.3 shows it is the position most exposed to them. Isolates
-are handled explicitly in every neighborhood operator (§7.2, §7.4). The number of
-components and the isolate fraction are recorded per run.
+**Isolates.** Of the three, only Erdős–Rényi at low density produces isolated nodes. The
+model runs on the **full graph, not the giant component**, because isolation is
+substantively meaningful: an agent reachable only by the entrepreneur is a real
+sociological position. Isolates are handled explicitly in every neighborhood operator
+(§7.2, §7.4). The number of components and the isolate fraction are recorded per run.
 
-**Empirical network.** Principal findings are replicated on at least one empirical
-network — a platform ego-network or friendship graph from a public repository
-(Leskovec & Krevl 2014) — to confirm the patterns are not artifacts of a generator.
+**Empirical networks** are used for an appendix replication (§12.3); they are not part of the
+main design. **Two** are used rather than one, and the reason is the comparability point just
+made: a single empirical graph differs from the generators in size, density *and* clustering
+at once, so the three effects cannot be told apart. Two graphs that bracket the operating mean
+degree from either side separate a density effect from a structure effect, and each is
+accompanied by the three generators re-run at its own realised $N$ and $\langle k\rangle$.
 
 ---
 
 ## 5. External Actors: Entrepreneur and Counter-Entrepreneur
 
 Two strategic actors promote opposing moral positions. The symmetric design follows
-Mikhaylova (2022), who shows the folk-devil / moral-entrepreneur distinction is a
-matter of *position within a contest* rather than fixed status: stigmatized groups
-routinely act as entrepreneurs of their own defense.
+Mikhaylova (2022), who shows the folk-devil / moral-entrepreneur distinction is a matter of
+*position within a contest* rather than fixed status: stigmatized groups routinely act as
+entrepreneurs of their own defense.
 
-The actors are **not agents.** They have no internal state, no position in the network,
-and cannot themselves be alarmed. They are exogenous forcing terms with a fixed pole
-and a fixed repertoire for the duration of a run.
+Neither is **an agent.** They have no internal state, no position in the network, and
+cannot themselves be alarmed. They are exogenous forcing terms, each with a fixed pole and
+a fixed repertoire for the duration of a run. Standing outside the network is what makes
+the two sources of alarm separable at all: an actor inside it would both cause and absorb
+alarm, and the decomposition of §10.1 would not be defined.
 
-**Moral entrepreneur (D).** Promotes the dominant moral claim, pushing agents it
-reaches toward the pole $p_D=+1$ and raising alarm. Empirically the elite, media, or
-state claims-maker of the literature. It is an analytically simplified claims-making
-*position*, not an inherently "good" actor.
+**Moral entrepreneur (D).** Promotes the dominant moral claim, pushing agents it reaches
+toward the pole $p_D=+1$ and raising alarm. Empirically the elite, media, or state
+claims-maker of the literature. It is an analytically simplified claims-making *position*,
+not an inherently "good" actor.
 
-**Counter-entrepreneur (C).** Promotes the stigmatized position, pushing toward
-$p_C=-1$. It represents the organized defense of the stigmatized — the niche and
-micro-media through which folk devils answer back (McRobbie & Thornton 1995).
+**Counter-entrepreneur (C).** Promotes the stigmatized position, pushing toward $p_C=-1$.
+It represents the organized defense of the stigmatized: the niche and micro-media through
+which folk devils answer back (McRobbie & Thornton 1995).
 
 > The **folk devil is not an actor.** It is the stigmatized pole ($b\approx-1$) around
-> which alarm and clustering *emerge* from the dynamics. This preserves the
-> constructivist insight that folk devils are constituted through attribution, while
-> still giving the contest two strategic sides.
+> which alarm and clustering *emerge* from the dynamics. This preserves the constructivist
+> insight that folk devils are constituted through attribution rather than given in
+> advance, while still giving the contest two strategic sides.
 
 ---
 
 ## 6. Process Overview and Scheduling
 
-Updates are **synchronous**: everything dated $t+1$ is computed from quantities dated
-$t$. The order below is therefore bookkeeping, not substance.
+Updates are **synchronous**: everything dated $t+1$ is computed from quantities dated $t$.
+The order below is therefore bookkeeping, not substance.
 
-1. **Select targets** — each actor computes $g^X_i(t)$ from current positions and fixed
-   degrees (§7.1). Targeting is re-decided each step and does not persist.
+1. **Select targets** — each active actor computes $g^X_i(t)$ from current positions and
+   fixed degrees (§7.1). Targeting is re-decided each step and does not persist.
 2. **Compute peer pull** $S_i(t)$ (§7.2).
 3. **Update positions** $b_i(t+1)$ (§7.3).
-4. **Compute alarm exposure $A_i(t)$ and othering exposure $\Phi_i(t)$; update alarm**
-   $\tau_i(t+1)$ (§7.4).
+4. **Compute alarm exposure $E_i(t)$ and othering exposure $\Phi_i(t)$; update alarm**
+   $a_i(t+1)$ (§7.4).
 5. **Record measurements** (§10).
 
-Activation, weights, distances, and targeting indicators are evaluated once from the
-step-$t$ state and used consistently. In particular $\Phi_i(t)$ uses $b(t)$, not the
-freshly computed $b(t+1)$.
+Weights, distances, and targeting indicators are evaluated once from the step-$t$ state and
+used consistently. In particular $\Phi_i(t)$ uses $b(t)$, not the freshly computed
+$b(t+1)$.
 
 ---
 
@@ -376,35 +502,51 @@ Four rules: who gets reached, how peers pull, how positions move, how alarm move
 ### 7.1 Targeting: four claims-making repertoires
 
 Each actor $X$ reaches $n_X=\min\bigl(N,\lceil\rho_X N\rceil\bigr)$ agents per step,
-setting $g^X_i(t)=1$ for those it selects and $0$ otherwise. The repertoires answer one
-question — *whom do you target?*
+setting $g^X_i(t)=1$ for those it selects and $0$ otherwise. Both actors draw from the same
+four repertoires. Three answer one question — *whom do you target?* — and the fourth exists
+to separate that question from a second one the first three confound with it.
 
 | Repertoire | Selects | Real-world counterpart |
 |---|---|---|
 | `random` | uniform random subset of size $n_X$, without replacement, redrawn each step | undifferentiated address; at $\rho_X=1$ this is mass broadcast |
 | `hub` | the $n_X$ highest-degree nodes | influencer recruitment, platform amplification |
 | `base` | the $n_X$ agents minimizing $\lvert b_i(t)-p_X\rvert$ | rallying the already-committed |
-| `conversion` | the $n_X$ agents maximizing $\lvert b_i(t)-p_X\rvert$ | targeting opponents |
+| `fixed_random` | uniform random subset of size $n_X$, drawn **once** at initialization and addressed every step | a control, not a claims-making strategy |
 
 `random` doubles as the null benchmark and, at full reach, as broadcast; a separate
 broadcast repertoire would be the same rule and is not defined. At $\rho_X=0$ we have
-$n_X=0$ and the actor is silent (§3.1).
+$n_X=0$ and that actor is silent (§3.1). The two actors target independently, so an agent
+may be reached by both, one, or neither in a given step.
 
-**Ties** are broken uniformly at random and redrawn each step. This matters for `hub`
-on near-regular graphs, where degrees are nearly equal and the repertoire degenerates
-toward `random`.
+**Why the fourth repertoire is needed.** `hub` and `base` differ from `random` in two ways at
+once: in *whom* they select and in the fact that they select the **same people repeatedly**.
+Any effect attributed to degree targeting may therefore be an effect of a fixed audience, and
+the three-repertoire design cannot tell them apart. `fixed_random` shares `random`'s selection
+rule — uniform, carrying no degree signal — and `hub`'s exposure schedule, so the contrast
+`random` vs `fixed_random` isolates the schedule and the contrast `fixed_random` vs `hub`
+isolates degree. Its audience is nested in $\rho_X$ (the first $n_X$ of one permutation), so a
+sweep in reach adds people rather than replacing them, and it is drawn from the seed rather
+than from the targeting stream, so it is identical across the four arms of the §10.1 design.
+It is a measuring instrument and is not offered as a claims-making strategy anyone employs.
 
-**The repertoires differ in exposure schedule as well as in logic.** Because degree is
-fixed, `hub` reaches the same people every step — a sustained campaign on a fixed
-audience. `base` and `conversion` re-rank each step and chase a moving target. `random`
-resamples independently. Comparisons across repertoires are therefore also comparisons
-across schedules, and are reported as such.
+**Ties** are broken uniformly at random and redrawn each step. This matters for `hub` on
+near-regular graphs, where degrees are nearly equal and the *selection rule* degenerates
+toward `random` — though the repertoire as a whole does not, for the reason given next.
+
+**The repertoires differ in exposure schedule as well as in logic, and the schedule turns out
+to be the operative difference.** Because degree is fixed, `hub` reaches the same people every
+step — a sustained campaign on a fixed audience. `base` re-ranks each step but chases a slow
+target, so its audience is nearly as stable. `random` resamples independently, and
+`fixed_random` does not resample at all. Comparisons across repertoires are therefore
+comparisons across schedules too, which is why the fourth repertoire is defined. The
+quantity that separates them is the exposure concentration of §10.3,
+$\mathrm{Var}_i(\sum_t g^X_i)$, and it varies by two orders of magnitude at identical reach.
 
 ### 7.2 Peer influence: bounded confidence
 
 A person is moved only by neighbors close enough to still be worth listening to. Those
-beyond the tolerance $\epsilon$ are tuned out — they do not move the person's position
-at all.
+beyond the tolerance $\epsilon$ are tuned out — they do not move the person's position at
+all.
 
 $$
 S_i(t) =
@@ -416,30 +558,29 @@ S_i(t) =
 $$
 
 The denominator runs over **all** neighbors, not only those within tolerance. Being
-surrounded by the morally distant therefore *reduces* how far a person moves: their
-social world offers them less to move toward. Activated neighbors ($\kappa_j=\gamma$)
-dominate the pull — alarmed people are heard more loudly.
+surrounded by the morally distant therefore *reduces* how far a person moves: their social
+world offers them less to move toward. Amplifying neighbors ($\kappa_j=\gamma$) dominate
+the pull — alarmed people are heard more loudly.
 
-This is bounded confidence **without repulsion** (Hegselmann & Krause 2002; Deffuant et
-al. 2000). Agents disengage from the morally distant but are not driven away by them,
-which keeps divergence attributable to a single mechanism (§14.1). At $\epsilon=2$ no
-pair can exceed the bound, so nobody is ever tuned out; if additionally $\gamma=1$ the
-weights are uniform and $S_i$ is exactly the DeGroot displacement (neighbor mean minus
-own position).
+This is bounded confidence **without repulsion** (Hegselmann & Krause 2002; Deffuant et al.
+2000). Agents disengage from the morally distant but are not driven away by them, which
+keeps divergence attributable to a single mechanism (§14.1). At $\epsilon=2$ no pair can
+exceed the bound, so nobody is ever tuned out; if additionally $\gamma=1$ the weights are
+uniform and $S_i$ is exactly the DeGroot displacement (neighbor mean minus own position).
 
 ### 7.3 Position update
 
-Agents reached by a claims-maker are pulled toward its pole, with strength set by depth
+Agents a claims-maker reaches are pulled toward its pole, with strength set by depth
 $\alpha_X$ and by the distance still to travel:
 
 $$I^D_i(t)=\alpha_D\,g^D_i(t)\bigl(1-b_i(t)\bigr),
 \qquad
 I^C_i(t)=\alpha_C\,g^C_i(t)\bigl(1+b_i(t)\bigr).$$
 
-Both are non-negative magnitudes; direction is supplied by their signs below. The
-distance factor means a claims-maker acting alone maps
-$b_i\mapsto(1-\alpha_X)b_i+\alpha_X p_X$ — a weighted average — so it can never push
-anyone past a pole, and stops moving an agent already there.
+Both are non-negative magnitudes; direction is supplied by their signs below. The distance
+factor means an actor acting alone maps $b_i\mapsto(1-\alpha_X)b_i+\alpha_X p_X$ — a
+weighted average — so it can never push anyone past a pole, and stops moving an agent
+already there.
 
 $$
 b_i(t+1)=\mathrm{clip}_{[-1,1]}\Bigl[
@@ -450,73 +591,64 @@ b_i(t+1)=\mathrm{clip}_{[-1,1]}\Bigl[
 +\underbrace{\xi_i(t)}_{\text{noise}}\Bigr],
 $$
 
-with $\xi_i(t)\overset{\text{iid}}{\sim}\mathrm{Normal}(0,\zeta^2)$ drawn independently
-for each agent and step.
+with $\xi_i(t)\overset{\text{iid}}{\sim}\mathrm{Normal}(0,\zeta^2)$ drawn independently for
+each agent and step.
 
-$\sigma$ is the Friedkin–Johnsen (1990) anchor weight, and $(1-\sigma)$ scales
-everything external — peers and claims-makers alike. Applying it to both avoids a
-specification in which anchoring blocks peers but not media, under which "the anchored
-are more media-driven" would follow from the algebra rather than from the dynamics.
+$\sigma$ is the Friedkin–Johnsen (1990) anchor weight, and $(1-\sigma)$ scales everything
+external — peers and claims-makers alike. Applying it to both avoids a specification in
+which anchoring blocks peers but not media, under which "the anchored are more
+media-driven" would follow from the algebra rather than from the dynamics.
 
-Note that $\alpha_X$ appears **only here**. It scales persuasion, not alarm; an actor
-is switched off by $\rho_X=0$, not by $\alpha_X=0$ (§3.1).
+Note that $\alpha_X$ appears **only here**. It scales persuasion, not alarm; an actor is
+switched off by $\rho_X=0$, not by $\alpha_X=0$ (§3.1).
 
-With $\sigma=\zeta=0$, $\epsilon=2$, $\gamma=1$ and both actors silent, the update
-reduces to plain DeGroot averaging, $b(t+1)=\mathbf M\,b(t)$, where $\mathbf M$ is the
-row-stochastic neighbor-averaging matrix ($M_{ij}=1/d_i$ for $j\in\mathcal N_i$, zero
-otherwise). At $\sigma=0$ there
-is no self-weight, so on a *bipartite* graph this limit oscillates rather than
-converging; any $\sigma>0$ restores convergence, which is why $\sigma$ is fixed above
-zero. The three generators of §4 are non-bipartite with probability approaching one, so
+With $\sigma=\zeta=0$, $\epsilon=2$, $\gamma=1$ and both actors silent, the update reduces to
+plain DeGroot averaging, $b(t+1)=\mathbf M\,b(t)$, where $\mathbf M$ is the row-stochastic
+neighbor-averaging matrix ($M_{ij}=1/d_i$ for $j\in\mathcal N_i$, zero otherwise). At
+$\sigma=0$ there is no self-weight, so on a *bipartite* graph this limit oscillates rather
+than converging; any $\sigma>0$ restores convergence. That degenerate case does not arise at
+the operating point, where $\epsilon<2$ keeps the influence graph from being the full
+bipartite one, and it is the only thing $\sigma>0$ buys (§3.2). The three generators of §4 are non-bipartite with probability approaching one, so
 this matters only for verification limit 1.
 
 ### 7.4 Alarm update
 
-**Alarm exposure.** A claims-maker reaching an agent enters that agent's neighborhood
-as **one maximally alarmed, permanently activated contact** ($\tau=1$, $\kappa=\gamma$).
-Alarm exposure is the activation-weighted mean alarm over that augmented neighborhood:
+**Alarm exposure.** A claims-maker, where it reaches an agent, enters that agent's
+neighborhood as **one maximally alarmed, permanently amplifying contact** ($a=1$,
+$\kappa=\gamma$). Alarm exposure is the weighted mean alarm over that augmented
+neighborhood:
 
 $$
-A_i(t)=\frac{\displaystyle\sum_{j\in\mathcal N_i}\kappa_j(t)\tau_j(t)+\gamma\,m_i(t)}
-{\displaystyle\sum_{j\in\mathcal N_i}\kappa_j(t)+\gamma\,m_i(t)},
-\qquad A_i(t)\in[0,1],
+E_i(t)=\min\Biggl\{1,\;
+\frac{\displaystyle\sum_{j\in\mathcal N_i}\kappa_j(t)\,a_j(t)+\gamma\,m_i(t)}
+{d_i+m_i(t)}\Biggr\},
+\qquad E_i(t)\in[0,1],
 $$
 
-with $A_i(t)=0$ in the remaining case $d_i=0$ and $m_i(t)=0$, where the ratio is
-otherwise undefined. An isolate reached by a claims-maker has $A_i=1$: that actor is
-its entire informational world.
+with $E_i(t)=0$ in the remaining case $d_i=0$ and $m_i(t)=0$, where the ratio is otherwise
+undefined. An isolate a claims-maker reaches has $E_i=1$: that actor is its entire
+informational world. Note that $m_i$ counts actors without regard to which pole they push
+toward: **both claims-makers raise alarm, because $a_i$ is undirected** (§2.1). A message
+that a threat exists is alarming whether it comes from the entrepreneur or from the
+defense.
 
-One expression carries both the peer channel and the media channel, and makes an
-explicit claim: **a claims-maker alarms in the same way an alarmed acquaintance does,
-and competes for attention on the same terms.** Its weight is therefore diluted by
-degree — the $\psi$ of §3.3 — so broadcast reaches everyone but moves the
-well-connected least.
+One expression carries both the peer channel and the media channel, and makes an explicit
+claim: **a claims-maker alarms in the same way an alarmed acquaintance does, and competes
+for attention on the same terms.**
 
-**Alternative specification (run alongside, not afterwards).** Because that dilution is
-imposed by the functional form, any finding about hubs risks being definitional rather
-than substantive. Writing the peer mean and the claims-maker share as
-
-$$P_i(t)=\frac{\sum_{j\in\mathcal N_i}\kappa_j(t)\tau_j(t)}{\sum_{j\in\mathcal N_i}\kappa_j(t)},
-\qquad
-\psi_i(t)=\frac{\gamma\,m_i(t)}{\sum_{j\in\mathcal N_i}\kappa_j(t)+\gamma\,m_i(t)},$$
-
-the expression above is **exactly** $A_i=(1-\psi_i)P_i+\psi_i$. The undiluted variant
-replaces the agent-specific $\psi_i$ with its value at mean degree,
-
-$$A^{\dagger}_i(t)=\bigl(1-\psi_0(m_i)\bigr)P_i(t)+\psi_0(m_i),
-\qquad
-\psi_0(m)=\frac{\gamma m}{\bar K+\gamma m},$$
-
-where $\bar K$ is the population mean of $\sum_{j\in\mathcal N_i}\kappa_j(t)$, and
-$P_i=0$ for isolates. The two specifications coincide exactly at mean degree and differ
-*only* in whether the claims-maker's weight varies with an agent's degree — so a
-difference between them isolates the degree gradient and nothing else. Both are run in
-Experiment A (§12.1), and H1's degree clause is stated only in whichever form survives
-both.
-
-Because $A_i$ is a normalized average, activation redistributes influence among sources
-rather than inflating the total. Tipping comes from *which* sources count, not from
-unbounded gain — which is why C2 is the right stability criterion.
+The denominator is the neighbor **count** $d_i+m_i$, not the total weight, and this is
+the load-bearing choice. Dividing by $\sum_j\kappa_j+\gamma m_i$ instead would make $E_i$
+a weighted *mean*, and a mean can never exceed its largest input: $E_i\le\max_j a_j$, so
+under C2 the population maximum contracts geometrically and alarm can never grow from
+peer contagion at any $\gamma$. Amplification would only re-weight who counts. Dividing by
+the count instead lets amplifying neighbors **add**: an agent with many alarmed contacts
+can end up more alarmed than any one of them, which is the reinforcement Granovetter
+(1978) and Centola & Macy (2007) describe. The numerator can then exceed the count — by a
+factor of at most $\gamma$ — so $E_i$ carries the cap at $1$ written into its definition.
+The cap is not a safeguard bolted on afterwards: it keeps $E_i$ commensurate with
+$\Phi_i$, it is what the induction in C1 uses, and where it binds is exactly the
+saturated regime C3 polices. The two forms coincide exactly at $\gamma=1$, where the
+numerator can no longer exceed the count and the cap is inert.
 
 **Othering exposure.** Alarm rises with exposure to the morally distant:
 
@@ -530,44 +662,41 @@ $$
 \qquad \Phi_i(t)\in[0,1].
 $$
 
-Division by 2 rescales $\Delta_{ij}\in[0,2]$ onto $[0,1]$ so $\Phi_i$ and $A_i$ are
+Division by 2 rescales $\Delta_{ij}\in[0,2]$ onto $[0,1]$ so $\Phi_i$ and $E_i$ are
 commensurate and $\delta$ and $\omega$ are directly comparable. Weighting by $\kappa_j$
-means an *activated* neighbor's disagreement is more threatening than the same
+means an *amplifying* neighbor's disagreement is more threatening than the same
 disagreement from a calm one. Claims-makers do not enter $\Phi_i$: othering is the
 experience of being surrounded by morally distant *peers*, not of receiving a message.
 
 Together with §7.2 this is the model's core asymmetry. A neighbor beyond your tolerance
 contributes **nothing** to $S_i$ and **the most** to $\Phi_i$: they cannot change your
 mind, and they are the ones who frighten you. This is the mechanism by which a divided
-population becomes its own source of alarm — the substance of H2.
+population becomes its own source of alarm, and it is the whole substance of H2.
 
 **Alarm update:**
 
 $$
-\tau_i(t+1)=\mathrm{clip}_{[0,1]}\Bigl[
-\underbrace{\mu\,\tau_i(t)}_{\text{memory}}
-+\underbrace{\delta\,A_i(t)}_{\text{contagion}}
+a_i(t+1)=\mathrm{clip}_{[0,1]}\Bigl[
+\underbrace{\mu\,a_i(t)}_{\text{memory}}
++\underbrace{\delta\,E_i(t)}_{\text{contagion}}
 +\underbrace{\omega\,\Phi_i(t)}_{\text{othering}}\Bigr].
 $$
 
-**Activation.** An agent is activated when $\tau_i(t)>\theta_i$, raising $\kappa_i$ from
-$1$ to $\gamma$ and feeding back into *both* $S_i$ and $A_i$ — an alarmed agent's
-position and alarm both carry further. This is complex contagion (Granovetter 1978;
-Centola & Macy 2007): panic spreads with reinforcement from multiple alarmed contacts,
-not by linear diffusion, and it is the mechanism behind the abrupt transitions of H1.
+**Amplification.** An agent past its threshold ($a_i(t)>\theta_i$) has $\kappa_i=\gamma$,
+which feeds back into *both* $S_i$ and $E_i$: its position and its alarm both carry
+further. This is complex contagion (Granovetter 1978; Centola & Macy 2007), and it is the
+mechanism behind the amplification of H1: panic spreads with reinforcement from multiple
+alarmed contacts rather than by linear diffusion, which is what lets the response exceed
+the forcing. Whether it also produces a *discontinuity* is a separate matter, and in the
+sub-critical region required by C3 it does not.
 
 **Passive decay.** With $\omega=0$ and no claims-maker present, a single agent whose
-neighbors are already calm decays at rate $\mu$. A whole population decaying together
-is slower: there $A_i\approx\bar\tau$, so $\bar\tau(t+1)\approx(\mu+\delta)\bar\tau(t)$
-and the legacy time is $-1/\ln(\mu+\delta)$ steps. **Memory and contagion therefore set
-the passive decay rate jointly**, which is why H2 must beat both of them together
-rather than $\mu$ alone: the question is whether observed persistence is this passive
-decay or the active regeneration supplied by $\omega\Phi_i$.
-
-**On "hysteresis."** Slow decay is *persistence*, not hysteresis. Genuine hysteresis
-requires bistability — two coexisting attractors at identical parameter values. The
-threshold mechanism makes this *plausible*, but it is a hypothesis, not a property;
-only the non-overlapping loop of §12.2 licenses the word in reporting.
+neighbors are already calm decays at rate $\mu$. A whole population decaying together is
+slower: there $E_i\approx\bar a$, so $\bar a(t+1)\approx(\mu+\delta)\bar a(t)$ and the
+legacy time is $-1/\ln(\mu+\delta)$ steps. **Memory and contagion therefore set the passive
+decay rate jointly**, which is why H2 must beat both of them together rather than $\mu$
+alone: the question is whether observed persistence is this passive decay or the active
+regeneration supplied by $\omega\Phi_i$.
 
 ---
 
@@ -575,65 +704,65 @@ only the non-overlapping loop of §12.2 licenses the word in reporting.
 
 1. Build the network; record realized mean degree, clustering, components, isolates.
 2. Draw initial positions $b_i(0)$; retain as the anchor.
-3. Draw initial alarm $\tau_i(0)\sim\mathrm{Uniform}[0,0.1]$.
+3. Draw initial alarm $a_i(0)\sim\mathrm{Uniform}[0,0.1]$.
 4. Draw thresholds $\theta_i$.
-5. Set $\epsilon,\mu,\delta,\omega$, each actor's $(\alpha_X,\rho_X)$ and repertoire,
-   and the fixed constants.
+5. Set $\epsilon,\mu,\delta,\omega$, each actor's $(\alpha_X,\rho_X)$ and repertoire, and
+   the fixed constants.
 
-**Initial alarm is low but non-zero, and this is load-bearing.** That baseline is what
-the model means by *warranted* concern: the alarm the situation supports before anyone
+**Initial alarm is low but non-zero, and this is load-bearing.** That baseline is what the
+model means by *warranted* concern: the alarm the situation supports before anyone
 amplifies it. Under the null run of §10.1 it diffuses and decays toward nothing, so
-anything still present later is by construction excess. Initializing at $\tau_i=0$
-would make the null run identically zero and collapse the panic index to plain mean
-alarm, destroying the comparison the paper rests on.
+anything still present later is by construction excess. Initializing at $a_i=0$ would make
+the null run identically zero and collapse the panic index to plain mean alarm, destroying
+the comparison the paper rests on.
 
 **Experimental regimes.** Two quantities are varied because the hypotheses require it;
 everything else is held at default.
 
 | Quantity | Regimes |
 |---|---|
-| $b_i(0)$ | **consensual** (default): $\mathrm{Uniform}[-0.2,0.2]$ · **dispersed**: $\mathrm{Uniform}[-1,1]$ · **polarized**: equal mixture of $\mathrm{Normal}(\pm0.7,0.15)$, truncated to $[-1,1]$ by rejection |
-| $\theta_i$ | **dispersed** (default): $\mathrm{Uniform}[0,1]$ · **uniform**: constant $\theta=0.5$, removing heterogeneity |
+| $b_i(0)$ | **consensual** (default): $\mathrm{Uniform}[-0.2,0.2]$ · **polarized** (contrast): equal mixture of $\mathrm{Normal}(\pm0.7,0.15)$, truncated to $[-1,1]$ by rejection |
+| $\theta_i$ | **dispersed** (default): $\mathrm{Uniform}[0,1]$ · **uniform** (contrast): constant $\theta=0.5$, removing heterogeneity |
 
-**The consensual regime is the default, and the choice is load-bearing.** Moral distance
-is what othering feeds on, and a dispersed or polarized start supplies a great deal of
-it before any actor has acted: for $b_i(0)\sim\mathrm{Uniform}[-1,1]$ two independent
-draws have $E\lvert b_i-b_j\rvert=2/3$, so $\bar\Phi(0)\approx1/3$ at step zero. Under
-such a start, self-generated alarm would appear immediately and would be indistinguishable
-from alarm the entrepreneur caused — which is exactly what H2 is about. The consensual
-regime has maximum initial distance $0.4$ and thus $\bar\Phi(0)\approx0.07$, low enough
-that essentially all division observed later has to have been manufactured within the run.
+**The consensual regime is the default, and the choice matters.** Moral distance is
+what othering feeds on, and a divided start supplies a great deal of it before anyone has
+acted. Under the consensual regime the largest possible initial distance is $0.4$ and
+$\bar\Phi(0)\approx0.07$; under the polarized regime $\bar\Phi(0)\approx0.39$, because two
+draws land in opposite components half the time. With a divided start, self-generated alarm
+appears immediately and is indistinguishable from alarm the entrepreneur caused, which is
+exactly what H2 is about. Under the consensual default, essentially all division observed
+later has to have been manufactured within the run.
 
-$\bar\Phi(0)$ is recorded for every run so that pre-existing distance is visible rather
-than inferred. Note also that the consensual spread interacts with tolerance: since the
-largest initial distance is $0.4$, any $\epsilon>0.4$ leaves every pair mutually
-audible at the start, and only $\epsilon<0.4$ fragments the population before anyone
-acts. Sweeps of $\epsilon$ report which side of that value they are on.
+$\bar\Phi(0)$ is recorded for every run so that pre-existing distance is visible rather than
+inferred. The consensual spread also interacts with tolerance: since the largest initial
+distance is $0.4$, any $\epsilon>0.4$ leaves every pair mutually audible at the start, and
+only $\epsilon<0.4$ fragments the population before anyone acts. Sweeps of $\epsilon$ report
+which side of that value they are on.
 
-The dispersed and polarized regimes are retained as contrasts, not as defaults: they ask
-whether an already-divided population needs an entrepreneur at all, which is a result
-about initial conditions (H2) rather than a confound. The uniform-threshold regime
-isolates the role of threshold dispersion in producing abrupt transitions (H1).
+The polarized regime is a contrast, not an alternative default: it asks whether an
+already-divided population needs an entrepreneur at all, which is a result about initial
+conditions (H2). The uniform-threshold regime isolates the role of threshold dispersion in
+shaping how the response scales with reach (H1).
 
 **Truncate by rejection; never clip.** Clipping a $\mathrm{Normal}$ draw onto $[-1,1]$
-places mass as two point atoms at $\pm1$ — for $\mathrm{Normal}(0,1)$, roughly a third
-of it — which is indistinguishable from the boundary pile-up the dynamics themselves
-produce (§14.2) and would pre-load the polarization measure with the very artifact the
-robustness check exists to detect.
+places mass as two point atoms at the bounds, which is indistinguishable from the boundary
+pile-up the dynamics themselves produce (§14.2) and would pre-load the polarization measure
+with the very artifact the robustness check exists to detect. This applies to the polarized
+regime, the only one drawn from a Normal.
 
-**Randomization.** All draws come from a single seeded generator, recorded with the
-run. Seeds are reused as **common random numbers** across settings — the same seed
-gives the same network and the same initial draws. This is not a convenience: §10
-depends on it, because the counterfactual must be the *same* population.
+**Randomization.** All draws come from a single seeded generator, recorded with the run.
+Seeds are reused as **common random numbers** across settings: the same seed gives the same
+network and the same initial draws. This is not a convenience — §10 depends on it, because
+the counterfactual must be the *same* population.
 
 ---
 
 ## 9. Input Data
 
-The model uses **no external input data**: no empirical time series, no exogenous
-driving variables, no calibrated parameters. The single exception is the **empirical
-network** of §4, which enters as fixed structure only; node attributes, where present,
-are discarded and agent states initialized exactly as in §8.
+The model uses **no external input data**: no empirical time series, no exogenous driving
+variables, no calibrated parameters. The single exception is the empirical network used in
+the appendix replication (§12.3), which enters as fixed structure only; node attributes,
+where present, are discarded and agent states initialized exactly as in §8.
 
 ---
 
@@ -641,188 +770,228 @@ are discarded and agent states initialized exactly as in §8.
 
 ### 10.1 Counterfactual decomposition
 
-Alarm has two manufactured sources — claims-making and othering — and each can be
-switched off independently: claims-making by silencing both actors ($\rho_D=\rho_C=0$),
-othering by setting $\omega=0$. Every run is therefore executed **four times on the
-identical seed**, in a $2\times2$ design:
+Alarm has two manufactured sources — claims-making and othering — and each can be switched
+off independently: claims-making by silencing both actors ($\rho_D=\rho_C=0$), othering by
+setting $\omega=0$. Every run is therefore executed **four times on the identical seed**, in
+a $2\times2$ design:
 
 | Run | Claims-making | Othering | Aggregate alarm |
 |---|---|---|---|
-| null | off | off | $\bar\tau^{\varnothing}(t)$ |
-| claims only | on | off | $\bar\tau^{\text{cm}}(t)$ |
-| othering only | off | on | $\bar\tau^{\text{oth}}(t)$ |
-| full | on | on | $\bar\tau(t)$ |
+| null | off | off | $\bar a^{\varnothing}(t)$ |
+| claims only | on | off | $\bar a^{\text{cm}}(t)$ |
+| othering only | off | on | $\bar a^{\text{oth}}(t)$ |
+| full | on | on | $\bar a(t)$ |
 
 These yield an exact decomposition of aggregate alarm at every step:
 
 $$
-\bar\tau
-=\underbrace{\bar\tau^{\varnothing}}_{\text{warranted}}
-+\underbrace{\bigl(\bar\tau^{\text{cm}}-\bar\tau^{\varnothing}\bigr)}_{\text{claims-making alone}}
-+\underbrace{\bigl(\bar\tau^{\text{oth}}-\bar\tau^{\varnothing}\bigr)}_{\text{othering alone}}
-+\underbrace{\bigl(\bar\tau-\bar\tau^{\text{cm}}-\bar\tau^{\text{oth}}+\bar\tau^{\varnothing}\bigr)}_{\text{interaction}} .
+\bar a
+=\underbrace{\bar a^{\varnothing}}_{\text{warranted}}
++\underbrace{\bigl(\bar a^{\text{cm}}-\bar a^{\varnothing}\bigr)}_{\text{claims-making alone}}
++\underbrace{\bigl(\bar a^{\text{oth}}-\bar a^{\varnothing}\bigr)}_{\text{othering alone}}
++\underbrace{\bigl(\bar a-\bar a^{\text{cm}}-\bar a^{\text{oth}}+\bar a^{\varnothing}\bigr)}_{\text{interaction}} .
 $$
 
-The **interaction term is the model's mechanism made visible**: it is the alarm that
-exists only because claims-making and othering are both present — the division an
-entrepreneur creates, amplified by a population that then finds its own divisions
-frightening. A purely additive world would leave it at zero.
+The **interaction term is the model's mechanism made visible**, and it is the object of
+interest rather than a residual: it is the alarm that exists only because claims-making and
+othering are both present — the division an entrepreneur creates, amplified by a population
+that then finds its own divisions frightening. A purely additive world would leave it at
+zero.
 
-**Property: the interaction term is identically zero at $t=1$.** Under common random
-numbers all four runs occupy the same state at $t=0$, so $\Phi_i(0)$, $\kappa_i(0)$ and
-$g^X_i(0)$ are identical across them. Writing $A^{(0)}_i$ and $A^{(m)}_i$ for alarm
-exposure without and with claims-makers present, the four first-step values are
-$\mu\tau_i(0)+\delta A^{(0)}_i$, $\;\mu\tau_i(0)+\delta A^{(m)}_i$,
-$\;\mu\tau_i(0)+\delta A^{(0)}_i+\omega\Phi_i(0)$ and
-$\;\mu\tau_i(0)+\delta A^{(m)}_i+\omega\Phi_i(0)$. Their alternating sum vanishes term by
-term, for every agent and hence in aggregate, provided C1 holds so that no clip binds.
-(The position clip is irrelevant here: $\tau_i(1)$ reads $b(0)$, not $b(1)$.)
+The term carries two channels at once. One is othering over newly created distance. The
+other is a reweighting effect: a campaign pushes some agents past their thresholds, and
+through $\kappa$ that makes the already-divided louder, which raises everyone else's
+$\Phi_i$ without any new distance being created. The contrast between $\bar\Phi$ in the
+full and othering-only runs separates the two, and both are recorded (§10.3).
+
+**Property: the interaction term is identically zero at $t=1$.** Under common random numbers
+all four runs occupy the same state at $t=0$, so $\Phi_i(0)$, $\kappa_i(0)$ and $g^X_i(0)$
+are identical across them. Writing $E^{(0)}_i$ and $E^{(1)}_i$ for alarm exposure without
+and with claims-makers present, the four first-step values are $\mu a_i(0)+\delta E^{(0)}_i$,
+$\;\mu a_i(0)+\delta E^{(1)}_i$, $\;\mu a_i(0)+\delta E^{(0)}_i+\omega\Phi_i(0)$ and
+$\;\mu a_i(0)+\delta E^{(1)}_i+\omega\Phi_i(0)$. Their alternating sum vanishes term by term,
+for every agent and hence in aggregate, provided C1 holds so that the alarm clip does not
+bind. (The cap inside $E_i$ is harmless: $E^{(1)}_i$ is shared by the two claims-on runs
+and $E^{(0)}_i$ by the two claims-off runs, capped or not, so it cancels within each
+pair. The position clip is irrelevant here: $a_i(1)$ reads $b(0)$, not $b(1)$.)
 
 The interaction can therefore first become non-zero at $t=2$, and only through one route:
 claims-making has moved positions, changing the moral distances that othering reads. **The
-interaction term consequently carries no component of the population's initial
-dispersion** — whatever it measures was manufactured within the run. This is what makes
-it, rather than any grouped share, the quantity H2 is stated against.
+interaction term consequently carries no component of the population's initial dispersion** —
+whatever it measures was manufactured within the run. This is what makes it, rather than any
+grouped share, the quantity H2 is stated against.
 
-Two properties should be stated rather than assumed. The decomposition is *exact but
-not a partition into non-negative shares*: any term except the first may in principle
-be negative, and where that occurs it is reported rather than suppressed. And the
-$2\times2$ form is used precisely because a sequential decomposition — removing one
-mechanism, then the other — gives different attributions depending on the order of
-removal, and would make the paper's central finding an artifact of that choice.
+The decomposition is exact but is **not** a partition into non-negative shares: any term
+except the first may be negative, and where that occurs it is reported rather than
+suppressed. The $2\times2$ form is used rather than a sequential one because removing the
+mechanisms in sequence attributes differently depending on the order of removal.
 
-**The three manufactured terms are reported separately and never merged.** Grouping the
-interaction with either side would make H2 true or false by construction rather than by
-evidence:
-
-* grouped with **othering**, the endogenous share inherits whatever moral distance the
-  population happened to start with. Under a dispersed start that is substantial before
-  anyone acts — for $b_i(0)\sim\mathrm{Uniform}[-1,1]$, two independent draws have
-  $E\lvert b_i-b_j\rvert=2/3$, hence $\bar\Phi(0)\approx1/3$ — so $\omega\bar\Phi$ is
-  large from step 1 while the exogenous share is still accumulating. The crossover would
-  occur almost immediately, for reasons having nothing to do with the entrepreneur;
-* grouped with **claims-making**, the endogenous share collapses to
-  $\bar\tau^{\text{oth}}-\bar\tau^{\varnothing}$, which under the consensual default
-  (§8) tends to zero because there is nothing to other. H2 could then never be
-  confirmed.
-
-Neither grouping is informative, because **the interaction is the quantity of interest,
-not a residual to be allocated.** It is alarm that requires the entrepreneur to have
-created division *and* the population to find division frightening — precisely the
-mechanism §1.2 claims. H2 is therefore stated as a comparison between the interaction
-term and claims-making alone (§10.3, H2), with othering-alone reported alongside as the
-measure of division that pre-existed the episode.
+**The three manufactured terms are reported separately and never merged.** Merging the
+interaction into either side makes H2 unfalsifiable in one direction. Merged with othering,
+the endogenous share inherits whatever moral distance the population started with, which
+under a divided start is large from step 1 while the exogenous share is still accumulating.
+Merged with claims-making, the endogenous share collapses to
+$\bar a^{\text{oth}}-\bar a^{\varnothing}$, which under the consensual default tends to
+zero because there is nothing to other.
 
 ### 10.2 The panic index
 
-**Disproportion** is the total excess over what the situation warrants, normalized by
-the room available for it:
+**Disproportion** is the total excess over what the situation warrants, normalized by the
+room available for it:
 
-$$\Pi(t)=\frac{\bar\tau(t)-\bar\tau^{\varnothing}(t)}{1-\bar\tau^{\varnothing}(t)}\in[0,1].$$
+$$\Pi(t)=\frac{\bar a(t)-\bar a^{\varnothing}(t)}{1-\bar a^{\varnothing}(t)}\in[0,1].$$
 
-$\Pi=0$ means no excess alarm whatever the absolute level. The denominator is safe by
-construction: in the null run $\max_i\tau_i$ is non-increasing whenever $\mu+\delta<1$,
-so $\bar\tau^{\varnothing}(t)\le0.1$ for all $t$ and the denominator lies in $[0.9,1]$.
+$\Pi=0$ means no excess alarm whatever the absolute level, and $\Pi\ge0$ always: the full
+run's alarm dominates the null run's agent by agent, since relative to the null run the
+full run only ever adds non-negative terms to an update that is monotone in the alarm
+vector. The denominator's conditioning is checked, not asserted. Under the reinforcing
+exposure rule $\mu+\delta<1$ alone does not force the null run's maximum down — an agent
+whose neighbors amplify faces a per-step gain of up to $\mu+\delta\gamma$ — so the
+guarantee comes from the measured C3 check (§3.3), which every reported cell passes: in
+the sub-critical regime the null run decays toward zero from its start near $0.05$. $\max_t\bar a^{\varnothing}$ is recorded per run
+so the denominator is auditable in the output; at the operating point it stays below
+$0.1$ and the denominator in $[0.9,1]$.
 
-Because $\bar\tau^{\varnothing}$ decays toward zero, $\Pi$ approaches $\bar\tau$ late in
-a run. This is the correct reading, not a defect: once the situation itself warrants
-nothing, all remaining alarm *is* excess. The index discriminates most sharply during
-the transient, where the comparison is live.
+Because $\bar a^{\varnothing}$ decays toward zero, $\Pi$ approaches $\bar a$ late in a run.
+This is the correct reading, not a defect: once the situation itself warrants nothing, all
+remaining alarm *is* excess. The index discriminates most sharply during the transient, where
+the comparison is live.
 
-**A moral panic episode** is a period of at least $W$ consecutive steps during which
-**both**
+**A moral panic episode** is a period of at least $W$ consecutive steps during which **both**
 
 * $\Pi(t)\ge\Pi^{*}$ — the reaction is disproportionate, and
-* $\bar a(t)\ge\bar a^{*}$ — a substantial share of the population is in the amplifying
-  regime.
+* $q(t)\ge q^{*}$ — a substantial share of the population is in the amplifying regime.
 
-Requiring both distinguishes panic from two things it is often confused with:
-widespread but proportionate concern (high $\bar a$, low $\Pi$), and successful
-manipulation of a small minority (high $\Pi$, low $\bar a$).
+Requiring both distinguishes panic from two things it is often confused with: widespread but
+proportionate concern (high $q$, low $\Pi$), and successful manipulation of a small minority
+(high $\Pi$, low $q$).
 
-$\Pi^{*}$, $\bar a^{*}$, and $W$ are conventions, not findings. Results are reported
-over a grid of all three, so conclusions can be seen not to depend on the cut — which is
-itself part of the contribution, since it shows *how much* the boundary between calm and
-panic depends on where one draws it.
+$\Pi^{*}$, $q^{*}$, and $W$ are conventions, not findings. Results are reported over a grid
+of all three, so conclusions can be seen not to depend on the cut — which is itself part of
+the contribution, since it shows *how much* the boundary between calm and panic depends on
+where one draws it.
 
-Of Goode & Ben-Yehuda's five criteria, this pair operationalizes **disproportionality**
-and, through $\bar a$, approximates **consensus**; **concern** is $\bar\tau$ directly and
-**volatility** is read from onset and decay times. **Hostility** has no faithful
-counterpart here, only the proxy $\bar\Phi$ — exposure to the morally distant rather than
-expressed hostility toward them.
+Of Goode & Ben-Yehuda's five criteria, this pair operationalizes **disproportionality** and,
+through $q$, approximates **consensus**; **concern** is $\bar a$ directly and **volatility**
+is read from onset and decay times. **Hostility** has no faithful counterpart here, only the
+proxy $\bar\Phi$ — exposure to the morally distant rather than expressed hostility toward
+them.
 
 ### 10.3 Supporting measurements
 
-Write $t_{\text{off}}$ for the step at which claims-making ceases ($\rho_X\to0$;
+Write $t_{\text{off}}$ for the step at which the entrepreneur withdraws ($\rho_D\to0$;
 §12.1). Recorded each step:
 
-* **Handover time** — the first step at which the **interaction** term of §10.1 exceeds
-  the **claims-making-alone** term, and stays above it for at least $W_{\!h}$ steps (a
-  hold threshold distinct from the $W$ of §10.2). The
-  primary quantity for H2. Defined against claims-making alone rather than against a
-  merged endogenous share, so that it measures when entrepreneur-*created* division
-  outweighs the entrepreneur's own signal, and cannot be satisfied by division that
-  pre-existed the episode.
-* **Pre-existing division** — $\bar\tau^{\text{oth}}(t)-\bar\tau^{\varnothing}(t)$, the
-  othering-alone term, reported as a separate curve. Under the consensual default it
-  should stay near zero; where it does not, the handover result for that regime is
-  reported as attenuated rather than as a clean test.
+* **Handover time** — the first step **at which the entrepreneur is still acting**
+  ($t<t_{\text{off}}$) where the **interaction** term of §10.1 exceeds the
+  **claims-making-alone** term and stays above it for at least $W_{\!h}$ steps (a hold
+  threshold distinct from the $W$ of §10.2). Defined against claims-making alone rather than
+  against a merged endogenous share, so that it measures when entrepreneur-*created* division
+  outweighs the entrepreneur's own signal, and cannot be satisfied by division that pre-existed
+  the episode.
+
+  **This is a supporting quantity, not the primary one, and the demotion is a finding.** It was
+  specified as "the primary quantity for H2" on the expectation that the transfer would take
+  time and that when it happened would be informative. It does not: the interaction overtakes
+  claims-alone at $t=2$, the earliest step §10.1 permits it to be non-zero, at every depth,
+  tolerance and topology at which it happens at all. A quantity whose answer is the same
+  constant everywhere it is defined cannot carry a hypothesis. The two defects below compound
+  this — it needs a window guard and a level test beside it — and together they are why the
+  composition ratio replaces it.
+
+  **The restriction to the entrepreneur's own window is load-bearing and was added after an
+  unguarded version misfired.** Once $D$ withdraws, claims-making-alone falls to zero within a
+  few steps, so "interaction $>$ claims-alone" is satisfied by *any* positive interaction
+  whatever. The criterion then reports a handover at $t_{\text{off}}+1$ — arithmetic, not a
+  transfer. This is not hypothetical: under the polarized regime, where the interaction stays
+  small because most of the alarm is pre-existing division the criterion is designed to
+  exclude, the unguarded version fires one step after withdrawal in most seeds while the
+  guarded version correctly declines. A handover is a statement about a contest between two
+  live quantities, and there is no contest once one of them has been switched off.
+
+  **The handover time is a ratio test and must be read beside a level.** It compares two
+  quantities and says nothing about their size, so it fires just as readily on a ratio between
+  two near-zero terms. In the fine depth sweep it is met at $\alpha_D=0.55$ and $0.60$ — where
+  $\Pi\approx0.045$, the interaction term is $0.000$ to three decimals and no episode occurs
+  at all. The handover is therefore reported **only for cells that meet the panic criterion of
+  §10.2**, and never on its own.
+* **Composition ratio** — the interaction term of §10.1 divided by the claims-making-alone
+  term, at a stated step while the entrepreneur is still acting. **The primary quantity for
+  H2.** It asks the question the handover time was meant to ask — does the division the
+  entrepreneur created outweigh the signal it emits — but as a magnitude rather than as a
+  date, which is the form in which the model has something to say. Unlike the handover time it
+  is defined whether or not the criterion is ever crossed, it is insensitive to the hold
+  threshold $W_{\!h}$, and it degrades gracefully: a ratio of $1.2$ and a ratio of $6$ are
+  different findings, where "handover at $t=2$" and "handover at $t=2$" are not. Reported with
+  its denominator, since a large ratio over a vanishing signal means nothing (the same caution
+  as the handover's).
+
+* **Pre-existing division** — $\bar a^{\text{oth}}(t)-\bar a^{\varnothing}(t)$, the
+  othering-alone term, reported as a separate curve. Under the consensual default it should
+  stay near zero; where it does not, the handover result for that regime is reported as
+  attenuated rather than as a clean test.
 * **Onset time** — the first step at which the panic criterion of §10.2 is met.
 * **Persistence** — the number of steps after $t_{\text{off}}$ until $\Pi$ falls below
   $\Pi(t_{\text{off}})/2$, censored at $T$. Runs never falling below are reported as
   **censored**, not assigned $T$; averaging censored durations understates persistence.
-* **Mean position** $\bar b(t)$ — needed to distinguish moving positions from lowering
-  alarm, which is what H3 turns on.
+  This is a measure of decay only while $C$ stays silent, which is the case in Experiment
+  B. In Experiment C the same window instead measures $C$'s effect, and is reported under
+  that reading.
+* **Mean position** $\bar b(t)$ and **mean othering exposure** $\bar\Phi(t)$, the latter in
+  both the full and othering-only runs, since their contrast separates the two channels
+  inside the interaction term (§13, open questions). The pair $(\bar b,\Pi)$ is also the
+  diagnostic for H3: a response that moves $\bar b$ toward its own pole while $\Pi$ rises
+  has won the argument and lost the panic.
 * **Polarization** — Sarle's bimodality coefficient
-  $\mathrm{BC}=(g_1^2+1)\big/\bigl(g_2+\tfrac{3(N-1)^2}{(N-2)(N-3)}\bigr)$ with $g_1$
-  the skewness and $g_2$ the excess kurtosis of $\{b_i(t)\}$ ($\mathrm{BC}>5/9$, the
-  uniform value, is the conventional flag).
-* **Local clustering of alarm** — Newman's scalar assortativity $r_\tau$, the
-  correlation of $\tau$ across the two endpoints of each edge.
-* **Degree–alarm association** — the correlation between $d_i$ and $\tau_i$, which H1
-  predicts to be negative under `random` at high reach.
+  $\mathrm{BC}=(g_1^2+1)\big/\bigl(g_2+\tfrac{3(N-1)^2}{(N-2)(N-3)}\bigr)$ with $g_1$ the
+  skewness and $g_2$ the excess kurtosis of $\{b_i(t)\}$ ($\mathrm{BC}>5/9$, the uniform
+  value, is the conventional flag).
+* **Local clustering of alarm** — Newman's scalar assortativity $r_a$, the correlation of
+  $a$ across the two endpoints of each edge.
 * **Exposure concentration** — $\mathrm{Var}_i\bigl(\sum_t g^D_i(t)\bigr)$, the variance
-  across agents of cumulative times reached. It separates repertoires that address the
-  same people repeatedly (`hub`, high variance) from those that spread exposure thinly
-  (`random`, low variance) at equal $\rho$, and is the quantity to inspect first if the
-  interaction term turns out non-monotone in $\rho$.
+  across agents of cumulative times reached. It separates repertoires that address the same people
+  repeatedly (`hub`, high variance) from those that spread exposure thinly (`random`, low
+  variance) at equal $\rho_D$. It matters because moral distance arises from *differences*
+  in exposure rather than from exposure as such: at full reach the population moves toward
+  one pole together, $\bar\Phi$ falls, and the interaction term can turn negative. Where
+  the interaction is non-monotone in $\rho_D$, this is the quantity that discriminates.
 
-Because escalation is stochastic, every quantity is reported as a distribution over
-seeds, with panic incidence as a **frequency** per setting. Never single runs.
+Because escalation is stochastic, every quantity is reported as a distribution over seeds,
+with panic incidence as a **frequency** per setting. Never single runs.
 
 ---
 
 ## 11. Design Concepts
 
-The ODD design concepts in order. Those not represented are named rather than omitted,
-since a reader cannot otherwise tell "absent by design" from "overlooked."
+The ODD design concepts in order, including those the model does not represent.
 
-* **Basic principles.** Position = anchor + bounded-confidence peer influence +
-  claims-maker forcing. Alarm = memory + threshold contagion + othering.
-* **Emergence.** Cascades, locally clustered alarm, disproportion, and the stigmatized
-  pole are emergent. The network, the two poles, and the repertoires are imposed.
+* **Basic principles.** Position = anchor + bounded-confidence peer influence + claims-maker
+  forcing. Alarm = memory + threshold contagion + othering.
+* **Emergence.** Cascades, locally clustered alarm, disproportion, and the stigmatized pole
+  are emergent. The network, the pole, and the repertoire are imposed.
 * **Adaptation.** Agents have **no adaptive traits and no decision rules**. They respond
   through fixed, involuntary update equations — ODD's *indirect* response, not adaptive
-  behavior. Strategic agency lies entirely with the claims-makers. This is the division
-  of labor by which the model addresses the micro–macro gap: macro escalation is
-  generated by non-strategic micro-response to strategic macro-input.
+  behavior. Strategic agency lies entirely with the claims-maker. This is the division of
+  labor by which the model addresses the micro–macro gap: macro escalation is generated by
+  non-strategic micro-response to strategic macro-input.
 * **Objectives.** Not represented. No utility, fitness, or payoff exists.
-* **Learning.** Not represented. Thresholds are fixed; claims-makers do not revise
-  repertoires mid-run.
+* **Learning.** Not represented. Thresholds are fixed; the claims-maker does not revise its
+  repertoire mid-run.
 * **Prediction.** Not represented. Agents are entirely present-looking.
-* **Sensing.** Agents observe, without error or lag, their neighbors' positions and
-  alarm, and — through $\kappa_j$ — whether each neighbor is activated. This is a strong
-  assumption: **alarm is publicly legible**, which is what makes complex contagion
-  possible at all. Agents observe no global quantity, no non-neighbor, and no neighbor's
-  threshold. Claims-makers, by contrast, see global state: `base` and `conversion` need
-  the full position vector, `hub` the full degree sequence. This asymmetry —
-  locally-sighted agents, globally-sighted claims-makers — is the model's representation
-  of the informational advantage of organized claims-making.
-* **Interaction.** Local and undirected among agents; global and one-way from
-  claims-makers to those they reach. Agents do not act back on claims-makers.
-* **Stochasticity.** Four sources: network generation, initial draws, `random` selection
-  and tie-breaking, and per-step position noise. Panic is therefore probabilistic and
-  reported as a rate.
+* **Sensing.** Agents observe, without error or lag, their neighbors' positions and alarm,
+  and — through $\kappa_j$ — whether each neighbor is amplifying. This is a strong
+  assumption: **alarm is publicly legible**, which is what makes complex contagion possible
+  at all. Agents observe no global quantity, no non-neighbor, and no neighbor's threshold.
+  The claims-makers, by contrast, see global state: `base` needs the full position vector,
+  `hub` the full degree sequence. This asymmetry — locally-sighted agents, globally-sighted
+  claims-makers — is the model's representation of the informational advantage of organized
+  claims-making.
+* **Interaction.** Local and undirected among agents; global and one-way from the
+  claims-makers to those they reach. Agents do not act back on them, and the two actors do
+  not interact with each other except through the population.
+* **Stochasticity.** Four sources: network generation, initial draws, `random` selection and
+  tie-breaking, and per-step position noise. Panic is therefore probabilistic and reported as
+  a rate.
 * **Collectives.** None imposed. Agents have no group-membership variable and no in-group
   rule; all apparent group behavior operates through moral distance and network position
   alone. Any clusters observed are emergent.
@@ -831,15 +1000,20 @@ since a reader cannot otherwise tell "absent by design" from "overlooked."
   vectors retained for a subset of runs.
 
 **Why these functional forms.** Each is the simplest form in an established lineage that
-reproduces a documented feature of panic. (i) A *hard* tolerance bound (Hegselmann &
-Krause 2002; Deffuant et al. 2000) rather than a smooth kernel encodes the categorical
-quality of moral judgement — a position is within the pale or it is not. (ii) A
-*Friedkin–Johnsen anchor* (1990) rather than plain DeGroot averaging (1974) encodes the
-stickiness of moral conviction and prevents the trivial consensus DeGroot produces on
-any connected, aperiodic graph. (iii) *Threshold contagion* (Granovetter 1978; Centola &
-Macy 2007) reflects that panic spreads with reinforcement from multiple alarmed
-contacts. (iv) The *othering* coupling is the simplest monotone map from local
-disagreement to alarm.
+reproduces a documented feature of panic. (i) A *hard* tolerance bound (Hegselmann & Krause
+2002; Deffuant et al. 2000) rather than a smooth kernel encodes the categorical quality of
+moral judgement — a position is within the pale or it is not. It is also what keeps the
+model away from the trivial consensus DeGroot averaging (1974) produces on any connected,
+aperiodic graph: at $\epsilon<2$ the influence graph fragments and the consensus never
+forms. (ii) The *Friedkin–Johnsen anchor* (1990) is available as a term but set to zero at
+the operating point (§3.2). It would encode the stickiness of moral conviction, but it
+does so by pulling each agent back toward its pre-campaign position, which erases the
+division this paper is about. (iii) *Threshold contagion* (Granovetter 1978; Centola & Macy
+2007) reflects that panic spreads with reinforcement from multiple alarmed contacts, which
+is why $E_i$ divides by the neighbor count rather than by the total weight (§7.4): under
+the weighted-mean alternative there is no reinforcement at all and the threshold does no
+work. (iv) The *othering* coupling
+is the simplest monotone map from local disagreement to alarm.
 
 ---
 
@@ -847,80 +1021,153 @@ disagreement to alarm.
 
 ### 12.1 Three experiments, one per hypothesis
 
-Throughout, an actor is activated or silenced by its reach $\rho_X$ (§3.1), never by its
-depth $\alpha_X$.
+An actor is activated or silenced by its reach $\rho_X$ (§3.1), never by its depth
+$\alpha_X$.
 
-**Experiment A — Ignition (tests H1).** Actor $D$ varies across the four repertoires
-with $C$ silent ($\rho_C=0$), crossed with the three topologies and the three initial
-position regimes. Reach $\rho_D$ is then raised in fine increments to locate any abrupt
-transition in panic incidence, with increments refined around any discontinuity found,
-and the sweep repeated under the uniform-threshold regime to isolate the role of
-dispersion. Depth $\alpha_D$ is varied against $\rho_D$ on a grid to test whether reach
-dominates depth.
+**Experiment A — Ignition (tests H1).** $D$'s repertoire varies across the four options of
+§7.1 with $C$ silent, crossed with the three topologies and the two initial position regimes.
+Reach $\rho_D$ is then raised in fine increments to locate any abrupt transition in panic
+incidence, with increments refined around any discontinuity found, and the sweep repeated
+under the uniform-threshold regime to isolate the role of dispersion. Depth $\alpha_D$ is
+varied against $\rho_D$ **on a full grid, not along one axis** — the two interact, because a
+reached agent's one-step displacement is $\alpha_D(1-b_i)$ and only when that exceeds
+$\epsilon$ does the campaign divide rather than convert, so a sweep in $\rho_D$ at fixed
+$\alpha_D$ can only ever describe one side of that boundary. The `fixed_random` arm is what
+makes the repertoire comparison interpretable: `random` vs `fixed_random` isolates the
+exposure schedule, `fixed_random` vs `hub` isolates degree, and without both contrasts an
+effect of addressing the same people repeatedly is indistinguishable from an effect of
+addressing well-connected ones.
 
-**Both alarm-exposure specifications are run as parallel arms** — the degree-diluted
-$A_i$ and the undiluted $A^{\dagger}_i$ of §7.4 — because the dilution is imposed by the
-functional form and could by itself produce H1's hub results. This is a gate on H1, not a
-post-hoc check: any conclusion about hub targeting or about the degree–alarm association
-that holds under only one arm is reported as **specification-dependent** and its clause
-is removed from H1 rather than defended. Experiments B and C then use whichever arm
-Experiment A shows the substantive conclusions to be robust to; if the arms disagree, both
-are carried forward.
+**Experiment B — Handover (tests H2).** The settings that reliably ignite in Experiment A
+are re-run with $\rho_D\to0$ at $t_{\text{off}}$ and $C$ still silent, tracking the
+decomposition of §10.1 across the withdrawal. The three alarm parameters are swept as
+described in §12.2. Tolerance $\epsilon$ and the initial position regime are crossed in,
+since H2 predicts both shift the handover time.
 
-**Experiment B — Handover (tests H2).** The settings that reliably ignite in Experiment
-A are re-run with $\rho_D\to0$ at $t_{\text{off}}$, tracking the decomposition of §10.1
-across the cessation. The three alarm parameters $\mu,\delta,\omega$ are swept jointly,
-and their relative contribution to persistence is estimated by variance-based
-sensitivity analysis rather than by comparing means. Tolerance $\epsilon$ and the
-initial position regime are crossed in, since H2 predicts both shift the handover time.
+**Experiment C — Counter-claims-making (tests H3).** $D$ is fixed at whichever repertoire
+Experiment A identifies as most escalating and withdraws at $t_{\text{off}}$; $C$ enters at
+$t_{\text{off}}$. This is the only experiment in which both actors appear; they are staggered rather than
+simultaneous, which matches the sequential logic of the contest: counter-claims-making is a
+*response*, not a simultaneous move.
 
-**Experiment C — Irreversibility (tests H3).** Actor $D$ is fixed at whichever
-repertoire Experiment A identifies as most escalating and withdraws at $t_{\text{off}}$;
-actor $C$ enters at $t_{\text{off}}$, varying across the four repertoires and over a
-grid of $(\alpha_C,\rho_C)$. This is the only experiment in which both actors are ever
-active, and the staggering matches the sequential logic of entrepreneurship and
-response: counter-claims-making is a *response*, not a simultaneous move.
+$C$ is run at **three configurations, not a grid**, chosen to span the dilemma of H3 rather
+than to map it:
 
-Run across all three: **finite-size checks** at $N\in\{500,1000,2000\}$ and
-**empirical-network replication** of the principal settings.
+| Configuration | $(\alpha_C,\rho_C)$ | What it represents |
+|---|---|---|
+| broad and shallow | low depth, high reach | a wide public campaign of reassurance |
+| narrow and deep | high depth, low reach | intensive mobilization of a small defense |
+| matched | equal to $D$'s values at withdrawal | a symmetric answer to the entrepreneur |
 
-**Replication.** Seeds per setting are chosen from a pilot so that the Monte Carlo
-standard error of panic incidence falls below a stated tolerance (e.g. $\pm0.03$,
-requiring roughly 250–300 seeds near an incidence of 0.5) — not fixed by convention.
-Each seed carries the full $2\times2$ set of runs (§10.1), so the reported cost per
-setting is four runs per seed.
+Three points answer H3's question, which is directional: does defense lower $\Pi$ or raise
+it. Locating the boundary in $(\alpha_C,\rho_C)$ is a different result and is left to
+separate work (§14.1). Each configuration is crossed with $C$'s repertoire only where
+Experiment A showed the repertoire to matter, and uses `random` otherwise.
 
-### 12.2 Hysteresis protocol
+In this experiment the "claims-making on" runs of the $2\times2$ (§10.1) include $C$'s
+entry, so $\Pi$ measures excess over a world with no organized claims-making of either
+kind. That is the comparison H3 needs: whether the defense raises or lowers the total.
 
-For the bistability question of §7.4, ramp $\rho_D$ up in small steps and back down
-within a single long run, holding each level long enough to relax, and compare the
-ascending and descending branches of $\Pi$ and $\bar a$.
+**Replication.** Seeds per setting are chosen from a pilot so that the Monte Carlo standard
+error of panic incidence falls below a stated tolerance (e.g. $\pm0.03$, requiring roughly
+250–300 seeds near an incidence of 0.5) — not fixed by convention. Exploratory grid cells use
+fewer seeds than the headline cells, and the two are reported separately. Each seed carries
+the full $2\times2$ set of runs (§10.1), so the cost per seed is four runs.
 
-### 12.3 Verification and sensitivity
+The tolerance binds on **incidence** and on nothing else. $\Pi$, the decomposition terms and
+the handover step are far tighter — their across-seed standard deviations are an order of
+magnitude below what a binary rate at $p\approx0.5$ demands — so a pilot at 20 seeds settles
+the continuous quantities and only the incidence tables need the full count. Reporting the two
+at the same seed count is wasteful; reporting incidence at the pilot count is not permissible,
+because at 20 seeds the standard error near $p=0.5$ is $\pm0.11$ and the rate cannot be
+distinguished from the shape of the curve underneath it.
 
-**Verification** — that the code implements this specification — is reported separately
-from any substantive result, by docking against models with known behavior. In all five,
-both actors are silent ($\rho_D=\rho_C=0$) unless stated otherwise.
+### 12.2 Sensitivity: the split at fixed intensity
+
+Sensitivity analysis is confined to the three alarm parameters, because they are the only
+ones that enter H2's testable claim, and it is single-stage: variance-based Sobol indices
+with no screening step.
+
+Sampling them independently on $[0,1]^3$ would be wrong. C1 requires
+$\mu+\delta+\omega\le1$, which is a simplex of volume $1/6$ inside the unit cube; sampling
+the cube and rejecting violations makes the surviving inputs mutually dependent, and the
+standard Sobol estimators no longer decompose the variance correctly. The design therefore
+reparameterizes rather than rejects:
+
+$$\mu = s\,p_\mu,\qquad \delta = s\,p_\delta,\qquad \omega = s\,p_\omega,$$
+
+with **total intensity** $s\sim\mathrm{Uniform}[0,1]$ and the **split**
+$(p_\mu,p_\delta,p_\omega)$ uniform on the 2-simplex, drawn from two independent uniforms
+$u_1,u_2\sim\mathrm{Uniform}[0,1]$ by the standard map
+$p_\mu=1-\sqrt{u_1}$, $p_\delta=\sqrt{u_1}\,(1-u_2)$, $p_\omega=\sqrt{u_1}\,u_2$. The Sobol
+inputs are $(s,u_1,u_2)$: three quantities, independent by construction, with C1 satisfied
+identically since $\mu+\delta+\omega=s\le1$.
+
+**A fourth input.** Any constant of §3.2 that competes with $\omega$ to explain persistence
+must enter here rather than sit outside the analysis. Two do. If $\sigma$ is kept positive
+rather than set to zero it must be added, since it is a restoring force toward the
+pre-campaign consensus. And $\zeta$ is added unconditionally, because at $\sigma=0$ the
+permanence of division is exactly the frozen state $\zeta$ exists to prevent (§3.2). $\zeta$
+is independent of $(s,u_1,u_2)$ and needs no reparameterisation — it is a fourth column, run
+over two boxes so the scope condition is located rather than assumed: $[0,0.02]$ and
+$[0,0.05]$, i.e. twice and five times the default.
+
+The reparameterization also matches the question. The dispute H2 joins is not whether alarm
+is intense but what holds it up at a given intensity, so the reported quantities are the
+first- and total-order indices of $(u_1,u_2)$ on persistence and on handover time at fixed
+$s$, together with the location on the simplex where persistence is maximal. If H2 is right,
+that maximum sits near the $\omega$ vertex, and the split carries a larger total index than
+the intensity does.
+
+**What the four-input design must report.** Not only whether the split beats the intensity,
+but whether it beats $\zeta$, and over what range. The answer is a scope condition and
+belongs with the hypothesis wherever it is stated: over $\zeta\in[0,0.02]$ the split carries
+$S_T=1.00$ against $0.02$ for noise; over $\zeta\in[0,0.05]$ the ordering reverses to $0.39$
+against $0.75$. A sensitivity analysis that reported only the three-input design would have
+shown $\omega$ winning and concealed the range over which that is true.
+
+### 12.3 Verification, and checks reported in the appendix
+
+**Verification** — that the code implements this specification — is reported separately from
+any substantive result, by docking against models with known behavior. In all five both
+actors are silent ($\rho_D=\rho_C=0$) unless stated otherwise.
 
 1. $\sigma=\zeta=0$, $\epsilon=2$, $\gamma=1$ → DeGroot; positions converge to a single
    consensus on any connected non-bipartite graph.
 2. $\sigma>0$, $\zeta=0$, otherwise as above → Friedkin–Johnsen; positions converge to
    $b^{*}=\bigl(I-(1-\sigma)\mathbf M\bigr)^{-1}\sigma\,b(0)$, with $\mathbf M$ as in §7.3.
-3. $\zeta=0$, $\epsilon<2$, $\delta=\omega=0$ → Hegselmann–Krause; the number of
-   surviving opinion clusters follows the known $\epsilon$-dependence. (With
-   $\delta=\omega=0$ alarm decays to zero, so no agent activates and $\gamma$ is inert.)
+3. $\zeta=0$, $\epsilon<2$, $\delta=\omega=0$ → Hegselmann–Krause; the number of surviving
+   opinion clusters follows the known $\epsilon$-dependence. (With $\delta=\omega=0$ alarm
+   decays to zero, so no agent amplifies and $\gamma$ is inert.)
 4. $\gamma=1$, homogeneous parameters, one actor active at fixed $\rho$ → the mean-field
-   fixed point $\bar\tau^{*}$ of §3.3 recovered to within Monte Carlo error.
+   fixed point $\bar a^{*}$ of §3.3 recovered to within Monte Carlo error.
 5. Empty graph ($d_i=0$ for all $i$), $\zeta=0$ → every agent relaxes to $b_i(0)$,
-   $\tau_i\to0$, and $\Pi\equiv0$ identically, since the full run and the null run
-   coincide.
+   $a_i\to0$, and $\Pi\equiv0$ identically, since the full run and the null run coincide.
 
-**Sensitivity** is global and two-stage: Morris elementary-effects screening over the
-six parameters to separate influential from non-influential, then variance-based Sobol
-indices (first- and total-order, Saltelli sampling) on the reduced set, per outcome
-measure. The three fixed constants of §3.2 are varied here too, to confirm no conclusion
-depends on where they were fixed. One-factor-at-a-time variation is used for intuition
-only; it cannot detect interactions, and this model is strongly interactive.
+**Appendix checks.** Robustness exercises are run on the headline settings only and reported
+as a single appendix table, not in the main text.
+
+1. Replication at $N\in\{500,1000,2000\}$ at fixed mean degree, so the three differ in size
+   and not in density.
+2. Replication on **two** empirical networks from a public repository (Leskovec & Krevl 2014),
+   each reported with its source, retrieval date, size, mean degree, clustering and component
+   count, and each accompanied by the three generators of §4 re-run at its realised $N$ and
+   $\langle k\rangle$. The two are chosen to bracket the operating mean degree — one denser,
+   one sparser — for the reason given in §4. The graphs enter as fixed structure only (§9),
+   and because mean degree moves the C3 boundary (§3.3), the sub-criticality probe is repeated
+   on every row.
+3. Replication at two alternative values of each fixed constant of §3.2. This is where the
+   non-neutrality of $\sigma$ and $\zeta$ is demonstrated rather than asserted: measured
+   persistence at $\sigma>0$ must track $-1/\ln(1-\sigma)$, and $\Pi$ long after withdrawal
+   must fall away at $\zeta$ substantially above the default.
+4. Asynchronous (random-order) updating, as a check on the update scheme. Targeting is still
+   decided once per step from the step-start state, so the actors gain no within-step
+   information the synchronous scheme denies them, and the sweep order is derived from
+   (seed, step) rather than from any of the three streams of §15, so it does not desynchronise
+   the arms of §10.1.
+
+The two artifact checks of §14.2 belong in the same table, being checks on the instrument
+rather than results.
 
 ---
 
@@ -929,82 +1176,147 @@ only; it cannot detect interactions, and this model is strongly interactive.
 Three hypotheses, one per phase of an episode, together constituting the claim of §1.2.
 Every parameter and experimental factor is tested by at least one.
 
+> **How to read this section.** Each hypothesis is given twice: as **registered**, in the
+> wording fixed before the program was run, and as a **registered-outcome table** recording
+> which of its clauses held. The registered wording is deliberately *not* corrected where the
+> runs contradicted it. Several clauses below are now known to be false and are left standing,
+> because a specification that quietly replaced its predictions with its findings would convert
+> a test into a description and destroy the evidential value of both — the H3 result in
+> particular means something only because two branches were fixed in advance and neither
+> occurred. Where a clause failed because it was asking the wrong question rather than because
+> the model disagreed, the table names the replacement question.
+>
+> **Anything written from this specification — a paper's hypotheses section, an abstract, a
+> results summary — should be written from the outcome tables, not from the registered
+> wording.** The registered wording is the pre-registration; the tables are the findings.
+>
+> Corrections to *mechanisms and definitions* are made in place in the sections that define
+> them (§1.4, §3.2, §3.3, §7.1, §10.3, §12.2, §14.2), because a specification that misdescribes
+> its own model is a defect rather than a hypothesis. Corrections to *predictions* are recorded
+> here and nowhere else.
+
 **H1 — Ignition: panic starts through structure, not persuasion.**
 Which repertoire ignites a panic depends on network topology, and ignition is
-**discontinuous**: below a critical reach $\rho$ nothing happens, and slightly above it
-panic follows. `hub` ignites fastest in hub-dominated networks and degenerates to
-`random` where degrees are even. `base` outperforms `conversion`, because moving the
-already-persuaded further costs little and creates the moral distance that alarms
-everyone else. Reach dominates depth above a threshold — the formal version of the claim
-that legitimacy matters chiefly as access. The discontinuity requires dispersed
-thresholds and weakens under the uniform-threshold regime. Igniting a panic in a
-consensual population is possible but requires substantially greater reach than in an
-already-dispersed one, since the entrepreneur must first manufacture the division that
-later sustains it.
+**amplifying but not discontinuous**: disproportion rises faster than one-for-one with
+reach, so that $\Pi>\rho_D$ across the usable range, while the response stays smooth and
+saturating rather than jumping at a critical value. `hub` ignites fastest in hub-dominated networks and degenerates to `random` where
+degrees are even, working through structural transmission rather than through any special
+susceptibility of well-connected agents. `base` ignites at lower reach than `random`, because
+moving the already-persuaded further costs little and creates the moral distance that alarms
+everyone else. Reach dominates depth above a threshold — the formal version of the claim that
+legitimacy matters chiefly as access — but not without limit: because moral distance arises
+from *differences* in exposure, at full reach the population moves toward one pole together
+and homogenizes, so manufactured division peaks at intermediate reach. Where it does, mass
+broadcast is self-limiting: it unites rather than divides. The shape of the response
+curve depends on threshold dispersion, and the uniform-threshold regime is the contrast
+that isolates that dependence. Igniting a panic in a consensual population is
+possible but requires substantially greater reach than in an already-polarized one, since the
+entrepreneur must first manufacture the division that later sustains it.
 
-One clause of H1 is **conditional on specification** and stated as such in advance: hubs
-matter as *transmitters rather than converts*, so the degree–alarm association is
-negative under `random` at high reach, at least early in an episode. That prediction
-follows partly from the degree dilution built into $A_i$ (§3.3, §7.4). It is therefore
-asserted only if it survives both the diluted and undiluted arms of Experiment A; if it
-holds under the diluted arm alone, it is withdrawn and hub targeting is re-interpreted as
-purely structural transmission.
+*Registered outcome (Experiment A, $N=1000$, $\langle k\rangle=10$).*
+
+| Clause | Outcome |
+|---|---|
+| Which repertoire ignites depends on topology | **Held**, but the dependence belongs to `hub` alone; `base` and `random` are near topology-invariant |
+| Amplifying: $\Pi>\rho_D$ across the usable range | **Held for concentrated repertoires only.** `random` never clears the diagonal at any reach, running at a flat $\Pi/\rho\approx0.18$. Amplification is a property of unequal exposure, not of claims-making as such |
+| Not discontinuous; smooth and saturating | **Held** at every topology and repertoire. Panic *incidence* nonetheless jumps from 0.10 to 0.95 over a narrow band of reach, which is thresholding a smooth quantity with small variance and not a transition — an argument for the grid of §10.2 |
+| `hub` ignites fastest in hub-dominated networks | **Held** |
+| …and degenerates to `random` where degrees are even | **Failed.** At degree s.d. $1.00$ it still exceeds `random` by more than an order of magnitude. What `hub` exploits is a *fixed audience*, not degree; degree is the most convenient way to name one. The `fixed_random` control of §7.1 was added to establish this, and behaves like `hub`, not like `random` |
+| `base` ignites at lower reach than `random` | **Held**, more strongly than stated: `random` does not ignite at all in the tested region |
+| Reach dominates depth above a threshold | **Held above a prior gate.** Depth is the switch and reach the dial: below $\alpha_D(1-\bar b)\approx\epsilon$ the campaign converts rather than divides and no reach ignites; above it $\Pi$ is nearly flat in $\alpha_D$ and rises with $\rho_D$. The formal claim about legitimacy-as-access survives with a precondition |
+| Manufactured division peaks at intermediate reach; broadcast is self-limiting | **Held.** The interaction term peaks in mid-range and collapses to ~0 at $\rho_D=1$, where exposure variance is exactly zero |
+| The *shape* of the response depends on threshold dispersion | **Failed as stated.** Flattening $\theta_i$ lowers $\Pi$ by 35–40% at every reach while leaving the shape and the peak location unchanged: dispersion sets the **gain** of the reinforcement loop, as §2.2 says, not the geometry. The clause presupposed a discontinuity there was none of |
+| Consensual ignition needs much greater reach than polarized | **Held**, and the polarized regime is confirmed as a contrast rather than an alternative default: its alarm is overwhelmingly othering-alone, i.e. division present before anyone acted |
 
 **H2 — Handover: what starts a panic is not what sustains it.**
-Starting from a consensual population, the claims-making-alone term of §10.1 rises first
-and then plateaus, while the **interaction** term rises later and overtakes it: the alarm
-attributable to entrepreneur-created division amplified by othering comes to exceed the
-alarm attributable to the entrepreneur's own signal. Othering-alone stays near zero
-throughout, since a consensual population has nothing to other until something divides
-it. Consequently persistence after cessation is governed by othering $\omega$ rather than
-by passive decay: $\omega$ carries a larger total Sobol index on persistence than $\mu$
-and $\delta$ do together, and $\Pi$ decays to zero when $\omega=0$ but to a positive
-floor when $\omega>0$. Low tolerance $\epsilon$ brings the handover forward, because it
-converts less division into more alarm. The entrepreneur's lasting effect is thus the
+Starting from a consensual population, the claims-making-alone term of §10.1 rises first and
+then plateaus, while the **interaction** term rises later and overtakes it: the alarm
+attributable to entrepreneur-created division amplified by othering comes to exceed the alarm
+attributable to the entrepreneur's own signal. Othering-alone stays near zero throughout,
+since a consensual population has nothing to other until something divides it.
+
+Consequently, after the entrepreneur withdraws at $t_{\text{off}}$ the index $\Pi$ remains
+elevated for a duration governed by othering rather than by passive decay: on the simplex of
+§12.2 persistence is maximized near the $\omega$ vertex, the split carries a larger total
+Sobol index than the total intensity does, and $\Pi$ decays to zero when $\omega=0$ but to a
+positive floor when $\omega>0$. This part of H2 holds only where the anchor does not itself
+return the population to consensus, which is why $\sigma=0$ (§3.2): at $\sigma>0$ the floor
+is suppressed on the anchor's own timescale whatever $\omega$ is. Low tolerance $\epsilon$
+brings the handover forward, because
+it converts less division into more alarm. The entrepreneur's lasting effect is thus the
 division it creates, not the alarm it injects.
 
-Under the dispersed and polarized regimes the handover should occur *earlier and with a
-smaller interaction term*, because part of the required division was already present.
-That is the substantive reading of those regimes — an already-divided population needs
-less entrepreneurship — and it is why they are contrasts rather than the default (§8).
+Under the polarized regime the handover should occur *earlier and with a smaller interaction
+term*, because part of the required division was already present. That is the substantive
+reading of the contrast: an already-divided population needs less entrepreneurship.
 
-**H3 — Irreversibility: withdrawal does not restore calm, and defense faces a dilemma.**
+*Registered outcome (Experiment B and the §12.2 design, at the headline setting).*
 
-The first half follows directly from H2 and is a firm prediction: because the population
-has become its own source of alarm, setting $\rho_D\to0$ leaves $\Pi$ elevated for a
-duration governed by $\omega$, not by $\mu+\delta$.
+| Clause | Outcome |
+|---|---|
+| Claims-alone rises, then plateaus | **Held** |
+| The interaction term rises **later** and overtakes it | **Failed as a sequence, held as an accounting statement.** The interaction overtakes at $t=2$ — the first step at which §10.1 permits it to be non-zero — in every seed, and then runs at roughly six times claims-alone for the rest of the campaign. There is no phase in which the panic belongs to the entrepreneur. The cause is the depth gate identified under H1: at $\alpha_D>\epsilon$ a reached agent's ties are severed on contact, so the division is complete on the first step and othering works on the second. **What survives is the composition claim — most of the alarm is endogenous — not the phase story, and §1.2 should be worded accordingly.** The fine depth sweep of §12.1 closes the remaining escape route: across eight depths spanning the gate, the handover step is $2$ wherever it occurs at all. **There is no regime in this model in which the transfer is gradual**, which is why §10.3 demotes the handover time and promotes the composition ratio in its place |
+| Othering-alone stays near zero | **Held** under the consensual default, which is what makes the interaction interpretable |
+| $\Pi\to0$ at $\omega=0$, positive floor at $\omega>0$ | **Held**, with the floor rising monotonically in $\omega$ |
+| Persistence maximized near the $\omega$ vertex | **Held, conditional on the C3 audit.** In the raw scan persistence peaks at the $\delta$ vertex; those points fail the measured sub-criticality check and are the case §3.3 warns will make H2 true for the wrong reason. Restricted to sub-critical points the maximum sits exactly on the $\omega$ vertex. **The audit is not optional — without it the scan reads as a refutation** |
+| The split carries a larger total Sobol index than the intensity | **Held decisively against intensity, and conditionally against noise.** On persistence and on handover time the $\omega$-versus-$\delta$ dial carries essentially all the variance and total intensity a few percent. The four-input design of §12.2 adds the condition: over $\zeta\in[0,0.02]$ the split still carries $S_T=1.00$ against $0.02$ for noise, but over $\zeta\in[0,0.05]$ the ordering reverses to $0.39$ against $0.75$. **The clause holds with a stated scope condition, $\zeta\lesssim0.02$, and that condition must travel with it** |
+| Low $\epsilon$ brings the handover forward | **Direction held, gradient absent.** The handover sits at its floor for every $\epsilon$ below the depth gate and never occurs above it. Tolerance and depth are the same gate seen from two sides — $\epsilon\approx\alpha_D(1-\bar b)$ — and should be stated once as a pair rather than twice as separate dials |
+| Persistence is governed by othering, not by the anchor | **Held**, and the §3.2 caution is confirmed quantitatively: at $\sigma>0$ measured persistence tracks $-1/\ln(1-\sigma)$ and the floor disappears |
+| *(added after the runs)* Persistence is governed by othering, not by position noise | **Held only up to $\zeta\approx0.02$.** This clause was not registered — it became necessary once $\zeta$ was found to compete with $\omega$ through the same channel the anchor uses (§3.2). It is recorded here rather than folded into the clause above because it is the sharpest limit on H2: the permanence of manufactured division requires that agents not drift back across the tolerance boundary, and how noisy moral positions are is an assumption this model does not settle |
+| Polarized: handover *earlier*, interaction *smaller* | **Split, and the cell is attenuated rather than a clean test.** The interaction is an order of magnitude smaller, as predicted; the handover does not come earlier. Under the polarized regime othering-alone is large, which is exactly the condition §10.3 says makes this an attenuated test — and it is also the case that exposed the unguarded handover criterion (§10.3). The substantive reading — an already-divided population needs less entrepreneurship — is supported by the interaction term; the timing claim cannot be evaluated with this instrument |
 
-The second half is a **structural dilemma, and both outcomes are specified in advance
-because the model does not settle the direction.** A counter-entrepreneur acts through two
-channels that pull opposite ways on the same parameter:
+**H3 — Defense: answering back need not lower the alarm, and may raise it.**
+Both outcomes are specified in advance, because the model does not settle the direction and
+a post-hoc reading would not be evidence. A counter-entrepreneur acts through two channels
+that pull opposite ways:
 
 * **immediate cost, scaling with $\rho_C$.** Every agent it reaches gains a maximally
-  alarmed contact of weight $\gamma$ in $A_i$ (§7.4). Reaching people is itself alarming,
-  and the effect lands on the first step.
+  alarmed contact of weight $\gamma$ in $E_i$ (§7.4). Reaching people is itself alarming,
+  because alarm is undirected, and the effect lands on the first step.
 * **delayed benefit, scaling with $\alpha_C$.** Any reduction in $\Phi$ requires actually
-  moving positions, which is slow at low $\alpha_C$ — and is not even guaranteed in sign:
+  moving positions, which is slow at low $\alpha_C$, and is not even guaranteed in sign:
   pulling agents toward $p_C=-1$ narrows moral distance only if it moves them toward the
-  population's bulk. If the bulk sits near $p_D$, a counter-entrepreneur *increases*
+  population's bulk. If the bulk sits near $p_D$, the counter-entrepreneur *increases*
   dispersion before it reduces it.
 
-The prediction is therefore not a direction but a **boundary in $(\alpha_C,\rho_C)$**, and
-locating it is the result. The two readings are fixed now:
+The two readings are fixed now. If the broad-and-shallow configuration lowers $\Pi$ while
+narrow-and-deep raises it, defense works but only through reach, and the entrepreneur's
+advantage of H1 carries over to the other side. If **no** configuration lowers $\Pi$,
+counter-claims-making is structurally self-defeating in this model: the asymmetry between
+making a panic and unmaking one lies in the communicative situation rather than in the
+actors' resources. That is the stronger finding, and §14.1 states the exclusion it rests on.
 
-* if a region exists where $\Pi$ falls, counter-claims-making works, but only where
-  $\alpha_C$ is high enough to move positions faster than $\rho_C$ injects alarm — which
-  means **effective defense must be deep before it is broad**, the reverse of the
-  entrepreneur's advantage in H1;
-* if no such region exists, counter-claims-making is **structurally self-defeating in this
-  model**: no combination of reach and depth lowers alarm, because the act of reaching
-  people alarms them. This is the stronger and more interesting finding, and it would say
-  that the asymmetry between making a panic and unmaking one is built into the
-  communicative situation rather than into the actors' resources.
+The diagnostic in both cases is the pair $(\bar b,\Pi)$ of §10.3. The three hypotheses are
+ordered by dependence: H3 has a mechanism only if H2 holds, and if H2 fails the claim of §1.2
+fails with it.
 
-Either way, the diagnostic is the pair $(\bar b, \Pi)$: a response that moves $\bar b$
-toward $p_C$ while $\Pi$ rises has won the argument and lost the panic.
+*Registered outcome (Experiment C, $D$ withdrawing at $t_{\text{off}}$, $C$ entering there).*
 
-H3 is the sharpest test of the design, and it is load-bearing in one direction only: if
-H2 fails, H3 has no mechanism and the paper's claim is wrong.
+| Clause | Outcome |
+|---|---|
+| An immediate cost scaling with $\rho_C$, landing at once | **Held**, and it does not go away: with the population fully converted and $\bar\Phi$ back at its null value, residual $\Pi$ is linear in $\rho_C$ and exactly flat in $\alpha_C$. A defense cannot lower the index below what its own broadcasting costs, because every claims-maker enters the alarm neighborhood of everyone it reaches as a maximally alarmed contact and alarm is undirected (§7.4) |
+| A delayed benefit, slow at low $\alpha_C$ | **Held**; every configuration eventually lowers $\Pi$ below the undefended baseline |
+| The benefit is not guaranteed in sign: pulling toward $p_C$ *raises* dispersion first if the bulk sits near $p_D$ | **Held, and it is the largest effect in the experiment.** The narrow-and-deep configuration drives $\bar\Phi$ *up* and $\Pi$ to 61% above the undefended baseline before collapsing |
+| **Branch 1** — broad-and-shallow lowers $\Pi$, narrow-and-deep raises it | **Failed.** Both lower it at the horizon, and narrow-and-deep lowers it further |
+| **Branch 2** — no configuration lowers $\Pi$ (the "structurally self-defeating" branch) | **Failed.** All three lower it, in 95–100% of seeds |
+| The $(\bar b,\Pi)$ diagnostic distinguishes winning the argument from winning the panic | **Neither registered branch.** Every configuration wins both, and only by converting the entire population to $p_C$, after which $\bar\Phi$ collapses to its null value because there is no disagreement left to fear |
+
+**The registered dichotomy was the wrong shape, and that is itself the finding.** The answer
+is neither branch but a **sequence**: every configuration raises $\Pi$ for a transient of
+9–24 steps and lowers it permanently thereafter, so "does defense lower the alarm or raise
+it" has no single answer and the sign depends on when one looks. Reporting only the endpoint
+says defense works; reporting only the transient says it backfires; both are true of the same
+run. Pre-registering two branches is what makes this reportable rather than a post-hoc story,
+and the correct methodological lesson is that a directional question about a dynamic system
+needs a *time* specified along with the direction.
+
+Two consequences follow for §14.1. First, the exclusion recorded there — that no actor can
+reassure — now attaches to the branch the runs **support**, not only to the strong branch it
+was written for: the defense lowers alarm only by eliminating the disagreement, because
+eliminating disagreement is the sole channel the specification leaves open. Second, the
+transient is far more robust than the endpoint, since the endpoint depends on $C$ acting
+unopposed for the remainder of the run — a window no real contest would grant, and one the
+"claims-makers do not learn" exclusion is responsible for.
 
 ---
 
@@ -1012,22 +1324,29 @@ H2 fails, H3 has no mechanism and the paper's claim is wrong.
 
 ### 14.1 What the model does not represent
 
-These exclusions are deliberate. Each was considered and left out because including it
-would add mechanism without serving the claim of §1.2. They bound what the results can
-be taken to show.
+Each exclusion below was considered and left out because including it would add mechanism
+without serving the claim of §1.2. Together they bound what the results can be taken to
+show.
 
-**Networks do not change.** Real panics rewire the social world: people unfriend, block,
-leave communities, get deplatformed. Homophilous rewiring is among the best-documented
-drivers of polarization, and it is absent here. This is the most consequential omission,
-and it is why repulsion is also excluded from §7.2 — on a static network, active
-repulsion and structural sorting cannot be told apart, and attributing divergence to the
-wrong one would compromise H2. The model therefore under-represents divergence rather
-than mis-attributing it.
+**The counter-entrepreneur is tested at three points, not mapped.** H3 asks whether defense
+lowers alarm or raises it, not where in $(\alpha_C,\rho_C)$ the sign changes. If the three
+configurations of §12.1 disagree, the paper reports the disagreement and locates the
+boundary in separate work rather than interpolating between three points.
 
-**There is no algorithm.** Contemporary "networked" panics are shaped by engagement
-ranking and recommendation, which have no counterpart here. `hub` targeting is a proxy
-for amplification: it captures who is structurally well-placed, not who a platform
-promotes. Claims about platform dynamics should not be read off this model.
+**Networks do not change.** Real panics rewire the social world: people unfriend, block, leave
+communities, get deplatformed. Homophilous rewiring is among the best-documented drivers of
+polarization, and it is absent here. This is the most consequential omission, and it is why
+repulsion is also excluded from §7.2 — on a static network, active repulsion and structural
+sorting cannot be told apart, and attributing divergence to the wrong one would compromise
+H2. The model therefore under-represents divergence rather than mis-attributing it.
+
+**There is no algorithm.** Contemporary "networked" panics are shaped by engagement ranking
+and recommendation, which have no counterpart here. `hub` targeting is a weaker proxy for
+amplification than it looks: the `fixed_random` control of §7.1 shows that most of what `hub`
+does is done by addressing a *fixed* audience rather than a well-connected one, so what the
+repertoire captures is a sustained campaign on a stable audience, not who is structurally
+well-placed and still less who a platform promotes. Claims about platform dynamics should not
+be read off this model.
 
 **Disproportion is internal.** $\Pi$ measures alarm in excess of the model's own
 counterfactual, not in excess of real danger. The model has no objective threat referent
@@ -1035,83 +1354,101 @@ against which reaction could be judged excessive. It formalizes the *structure* 
 disproportionality criterion and makes it computable, without settling whether any real
 episode meets it. This is a genuine limit on the contribution.
 
-**Alarm has no object.** $\tau$ records how alarmed a person is, not what they fear. The
-model cannot distinguish fear of the folk devil from fear of the mob, and treats both
-claims-makers as raising the same quantity.
-
-**Panic leaves no institutions.** Goode & Ben-Yehuda's legacy is legal and institutional
-— laws, rules, enforcement capacity. Here legacy is purely attitudinal: residual alarm in
-individuals. The model can show a panic outlasting its cause; it cannot show it hardening
-into policy.
-
-**No one goes quiet.** Agents cannot exit, disengage, or self-censor. The spiral of
-silence, a well-documented feature of moralized environments, is absent.
+**Alarm has no object.** It records how alarmed a person is, not what they fear. The model
+cannot distinguish fear of the folk devil from fear of the mob.
 
 **No actor can reassure.** Every claims-maker enters the alarm neighborhood of everyone it
-reaches as a maximally alarmed contact (§7.4); there is no message type that says *there
-is no threat* and lowers $\tau$ directly. An actor can reduce alarm only indirectly, by
-moving positions until moral distance narrows. This exclusion must be read together with
-H3: the strong branch of that hypothesis — that counter-claims-making cannot lower alarm
-at any $(\alpha_C,\rho_C)$ — would then be a property of the specification rather than a
-finding about counter-panic. Where the runs support that branch, it is reported as
-conditional on the absence of a reassurance channel, and the corresponding extension (an
-actor with a signed alarm effect) is named as the test that would settle it. The same
-discipline applies here as to degree dilution and H1 (§14.2).
+reaches as a maximally alarmed contact (§7.4); there is no message type that says *there is
+no threat* and lowers alarm directly. Alarm can be reduced only indirectly, by moving
+positions until moral distance narrows. This exclusion must be read together with H3: its
+strong branch — that no configuration of the counter-entrepreneur lowers $\Pi$ — would then
+be a property of the specification rather than a finding about counter-panic. Where the runs
+support that branch it is reported as conditional on the absence of a reassurance channel,
+and the extension that would settle it, an actor with a signed effect on alarm, is named as
+the test.
+
+**Panic leaves no institutions.** Goode & Ben-Yehuda's legacy is legal and institutional —
+laws, rules, enforcement capacity. Here legacy is purely attitudinal: residual alarm in
+individuals. The model can show a panic outlasting its cause; it cannot show it hardening into
+policy.
+
+**No one goes quiet.** Agents cannot exit, disengage, or self-censor. The spiral of silence, a
+well-documented feature of moralized environments, is absent.
 
 **Claims-makers do not learn.** Repertoires are fixed within a run. Real entrepreneurs
-escalate when ignored and pivot when countered. Experiment C provides a one-shot response
+escalate when ignored and pivot when countered; Experiment C provides a one-shot response
 and nothing more.
 
 **No community structure is planted.** Echo chambers are not represented as network
-communities; clustering of alarm is measured where it emerges (§10.3) rather than built
-in. This is the most natural extension of the model.
+communities; clustering of alarm is measured where it emerges (§10.3) rather than built in.
+This is the most natural extension of the model.
 
 ### 14.2 Known artifacts and checks
 
-1. **Boundary pile-up.** Noise, and claims-making acting in the same direction as a
-   strong peer pull, can drive positions past $\pm1$, where clipping accumulates mass at
-   the poles and inflates bimodality. *Check:* report the interior bimodality coefficient
-   excluding boundary atoms, record how often clipping binds, and replicate key settings
-   with a soft $\tanh$ bound.
+1. **Boundary pile-up.** Noise, and claims-making acting in the same direction as a strong peer
+   pull, can drive positions past $\pm1$, where clipping accumulates mass at the poles and
+   inflates bimodality. *Check:* report the interior bimodality coefficient excluding boundary
+   atoms, record the share of agents standing on a pole and how often clipping binds, and
+   replicate key settings under a **soft bound**.
 
-2. **Degree dilution of claims-making.** Folding claims-makers into the alarm
-   neighborhood (§7.4) makes their weight fall with degree, so hubs are harder to alarm
-   *by construction*. This bears directly on H1 — both on hub targeting and on the
-   degree–alarm prediction — and could make either look substantive when it is
-   definitional. Because it can change how H1 is stated rather than merely qualify it,
-   the check is **not deferred**: the diluted and undiluted specifications of §7.4 run as
-   parallel arms of Experiment A from the outset (§12.1), and H1 retains only the clauses
-   that survive both. This is the one artifact in this list that is a gate on a hypothesis
-   rather than a caveat on a measurement.
+   *The soft bound must be the identity away from the poles.* The obvious choice,
+   $b=\tanh(\text{raw})$, is not admissible: $\tanh(x)<x$ for every $x>0$, so it is a bound
+   **and** a contraction toward the origin, and with no forcing at all it drives every
+   position geometrically to zero. That is a restoring force toward the pre-campaign
+   consensus — the pathology §3.2 identifies in $\sigma$, arriving through a different door —
+   and it would dissolve manufactured division for reasons having nothing to do with the
+   boundary. The admissible form is the identity on $[-c,c]$ with a knee beyond it, e.g.
+   $f(x)=\mathrm{sign}(x)\bigl(c+(1-c)\tanh\frac{|x|-c}{1-c}\bigr)$ for $|x|>c$ at $c=0.9$,
+   which is $C^1$ at the join, strictly interior everywhere, and unchanged wherever the hard
+   clip would not have bound. The two must then agree, and the replication is the test of
+   that.
 
-3. **Counterfactual validity.** The decomposition of §10.1 — and therefore H2 — assumes
-   the four runs remain comparable, which holds only under common random numbers and only
-   while trajectories have not diverged chaotically. *Check:* verify that the three
-   counterfactual runs stay within Monte Carlo error of their own replicates, and report
-   the step at which trajectories separate beyond that tolerance. $\Pi$ and the handover
-   time are reported only up to that step.
+2. **Counterfactual validity.** The decomposition of §10.1 — and therefore H2 — assumes the
+   four runs remain comparable, which holds only under common random numbers and only while
+   trajectories have not diverged chaotically. *Check:* replicate each arm with the population
+   held fixed and only the position-noise substream re-drawn, and report the **horizon** — the
+   first step at which the largest within-arm spread of $\bar a$ exceeds a stated fraction of
+   the full-versus-null gap the comparison is trying to resolve. Past that step a single
+   trajectory is no longer a reliable read of the counterfactual, because re-drawing the noise
+   moves one arm by more than a fraction of the effect. Seed-averaged levels remain estimable
+   past it; **curves and single runs do not**, and quantities read beyond the horizon are
+   reported as distributions over seeds only. The mechanism to expect is not chaos but
+   equilibrium selection: after withdrawal the system sits in a frozen divided state whose
+   exact partition depends on which agents happened to be pushed past tolerance, so noise that
+   was irrelevant during forcing becomes what picks between nearby equilibria.
 
 Excluding repulsion means the period-2 oscillations that afflict synchronously updated
-repulsive models cannot arise. Asynchronous replication of the principal settings is
-nonetheless run as a check on the update scheme.
+repulsive models cannot arise. Asynchronous replication of the headline settings is
+nonetheless run as a check on the update scheme (§12.3).
 
 ---
 
 ## 15. Implementation and Reproducibility
 
-* **Software.** Python; `networkx` for generation and structural measures, `numpy` for
-  the vectorized update, `SALib` for Morris and Sobol analysis. Versions pinned in an
-  environment file distributed with the code.
-* **Randomness.** One `numpy.random.Generator` (PCG64) per run, seeded from a recorded
-  integer; no global RNG state. Parallelism draws independent substreams via
-  `SeedSequence.spawn`, so results are invariant to worker count.
-* **Determinism.** Given seed, topology, and parameter vector, a run is exactly
-  reproducible — a precondition for the counterfactual design of §10.1, not merely good
-  practice. All four runs of a $2\times2$ set draw from the same seed and must produce
-  identical networks, initial positions, alarm, and thresholds; this is asserted in code
-  rather than assumed.
-* **Outputs.** Per-step measurement series for all four runs of each seed, per-run
-  structural statistics and the seed, and full state vectors for a retained subset.
-* **Availability.** Code, environment file, seed lists, and the empirical edge list (or
-  its retrieval script) archived so every figure can be regenerated from this
-  specification and the deposit alone.
+* **Software.** Python; `networkx` for generation and structural measures, `numpy` for the
+  vectorized update, `SALib` for the Sobol analysis. Versions pinned in an environment file
+  distributed with the code.
+* **Randomness.** All generators are PCG64 (`numpy.random.Generator`), derived from one
+  recorded integer seed; no global RNG state. Within a run, three named substreams are
+  spawned from the seed — *setup* (network and initial draws), *targeting* (repertoire
+  selection and tie-breaking), and *noise* (per-step position noise). The separation is
+  load-bearing: the silent arms of the $2\times2$ consume no targeting draws, and if
+  targeting and noise shared one stream, the noise sequences would desynchronize across
+  arms and the counterfactual would no longer hold the same population fixed.
+  Parallelism draws further independent substreams via `SeedSequence.spawn`, so results
+  are invariant to worker count.
+
+  Two quantities that must be **identical across the arms** are for the same reason derived
+  from the seed directly rather than drawn from any stream: the permanent audience of the
+  `fixed_random` repertoire (§7.1), keyed on (seed, actor), and the agent visiting order of
+  the asynchronous update (§12.3), keyed on (seed, step). Taking either from *targeting* would
+  desynchronize it across arms; taking either from *noise* would desynchronize the noise.
+* **Determinism.** Given seed, topology, and parameter vector, a run is exactly reproducible —
+  a precondition for the counterfactual design of §10.1, not merely good practice. All four
+  runs of a $2\times2$ set draw from the same seed and must produce identical networks,
+  initial positions, alarm, and thresholds; this is asserted in code rather than assumed.
+* **Outputs.** Per-step measurement series for all four runs of each seed, per-run structural
+  statistics and the seed, and full state vectors for a retained subset.
+* **Availability.** Code, environment file, seed lists, and the empirical edge list (or its
+  retrieval script) archived so every figure can be regenerated from this specification and the
+  deposit alone.

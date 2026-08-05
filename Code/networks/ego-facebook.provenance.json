@@ -1,0 +1,19 @@
+{
+  "dataset": "ego-facebook",
+  "url": "https://snap.stanford.edu/data/facebook_combined.txt.gz",
+  "page": "https://snap.stanford.edu/data/ego-Facebook.html",
+  "repository": "SNAP (Leskovec & Krevl 2014)",
+  "citation": "Leskovec, J. & McAuley, J. (2012). Learning to discover social circles in ego networks. NIPS 25.",
+  "kind": "platform ego-network (Facebook friendship circles, anonymised)",
+  "retrieved": "2026-08-04",
+  "sha256": "f41c026ed8af3cc3359f1ca5573d0605fb09ae0eefa34544b820fd8c6e2ef296",
+  "bytes": 854362,
+  "realised": {
+    "n_agents": 4039,
+    "n_edges": 88234,
+    "mean_degree": 43.69101262688784,
+    "clustering": 0.6055467186200876,
+    "n_components": 1,
+    "isolate_fraction": 0.0
+  }
+}

@@ -24,3 +24,12 @@
 
 # Unpacked Word template (for inspection only)
 tf_template_unpacked/
+
+# Simulation output: regenerable from the code and the recorded seeds
+# (`cd Code && python run_hypotheses.py --seeds 250`, ~54 min). 64 MB.
+Results/data/*.json
+
+# Empirical edge lists: re-retrievable via fetch_empirical_network.py, which
+# records URL, retrieval date and SHA-256. The provenance records ARE tracked.
+Code/networks/*.txt
+Code/networks/*.txt.gz

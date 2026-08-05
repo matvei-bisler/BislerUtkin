@@ -1,0 +1,19 @@
+{
+  "dataset": "ca-grqc",
+  "url": "https://snap.stanford.edu/data/ca-GrQc.txt.gz",
+  "page": "https://snap.stanford.edu/data/ca-GrQc.html",
+  "repository": "SNAP (Leskovec & Krevl 2014)",
+  "citation": "Leskovec, J., Kleinberg, J. & Faloutsos, C. (2007). Graph evolution: densification and shrinking diameters. ACM TKDD 1(1).",
+  "kind": "collaboration network (arXiv General Relativity co-authorship)",
+  "retrieved": "2026-08-04",
+  "sha256": "f8ce6e931e068b878044b783da99ef603f566c87bcbce7991cd53720879f1660",
+  "bytes": 351704,
+  "realised": {
+    "n_agents": 5241,
+    "n_edges": 14484,
+    "mean_degree": 5.527189467658844,
+    "clustering": 0.5297368673030521,
+    "n_components": 354,
+    "isolate_fraction": 0.0
+  }
+}

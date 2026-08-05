@@ -1,0 +1,4 @@
+numpy>=1.24
+networkx>=3.0
+# optional, only for the Sobol analysis of spec §12.2
+SALib>=1.4
