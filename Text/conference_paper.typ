@@ -324,7 +324,7 @@ Whether panics are held up by elite claims-makers or by the reaction of the publ
 
 Neither camp is right as usually stated. The entrepreneur is _necessary_: where nobody campaigns nothing happens, and where the campaign is too mild to be disowned nothing happens either. It is also nearly irrelevant to the size of what follows. Its achievement is to divide the population far enough that alarm becomes self-sustaining, after which it is no longer needed. That has a consequence for how panics end, or fail to. The claims-maker cannot undo what it started, because the excess alarm no longer rests on the campaign; only a population for whom disagreement is not in itself frightening will shed that alarm entirely. Any intervention therefore has an object other than "stop the campaign", and the model names what an empirical study would have to measure: how morally far apart people are from those they actually talk to, in place of how much campaigning there is. The mechanism has a cousin in the cascade literature, where public reaction outruns the information that started it @kuranAvailabilityCascadesRisk1999. The two differ in what does the reinforcing: information and reputation there, disagreement itself here.
 
-== Three predictions for empirical research
+== Predictions for empirical research
 
 #h4[Ignition depends on repeated exposure to the same audience] The mass broadcaster is, on this model, structurally the worst available moral entrepreneur. A campaign that reaches everyone equally leaves nobody more exposed than anyone else, and the population then moves as one: no division is manufactured and no episode occurs under any reading of the criterion. A claims-maker becomes dangerous by addressing some people and not others, repeatedly, so the fragmentation of audiences belongs to the mechanism itself and not merely to the setting in which the mechanism runs. The prediction is uncomfortable for a common intuition about mass media, since it implies that the mass-press episodes of the classic literature @cohenFolkDevilsMoral1994 and contemporary platform cases @carlsonFakeNewsInformational2020 @walshSocialMediaMigration2023 are doing different things under one label, and it makes the difference measurable, through the unevenness of exposure and not its volume. One caution comes from the same control. Since most of what targeting the well-connected achieves is achieved just as well by a fixed audience chosen at random, targeting by connectedness is a weak stand-in for algorithmic amplification, and nothing here licenses a claim about platform ranking.
 
@@ -334,7 +334,7 @@ Neither camp is right as usually stated. The entrepreneur is _necessary_: where 
 
 A methodological warning belongs beside these. Panic incidence in our runs jumps where the underlying disproportion moves smoothly, so empirical episode counts, which apply coding rules to continuous public reaction, may inherit their sharpness from the coding rule.
 
-== What bounds the results
+== Limitations
 
 The hard ceiling is set by what the panic index means. It measures alarm in excess of what the _same population in the same model_ would have felt with nobody campaigning, and not in excess of any real danger, because the model contains no danger to be in excess of. We have given the disproportionality criterion a definite structure and made it computable; we have not made it decidable for any actual episode @hierRethinkingProblemDisproportion2024, and no amount of further computation or better data would move that line.
 
