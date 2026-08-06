@@ -2,6 +2,11 @@
 *.pdf
 *.aux
 
+# ...except the figure PDFs, which are build *inputs* for the paper: the text
+# embeds them as vector art, so a fresh clone cannot compile without them.
+# Regenerate with Results/hypothesis_figures.ipynb.
+!Results/figures/*.pdf
+
 # Typst cache
 .typst/
 

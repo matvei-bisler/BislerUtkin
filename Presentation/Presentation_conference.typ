@@ -48,7 +48,7 @@ Disproportion requires a comparison:
   ]
 ]
 
-That world is not observable, so the criterion is asserted rather than demonstrated.
+That world is not observable, so the criterion is asserted and left undemonstrated.
 Hier (2024) treats it as the field's central unresolved problem.
 
 - Reviews: panic invoked as self-evident, criteria unstated
@@ -58,10 +58,10 @@ Hier (2024) treats it as the field's central unresolved problem.
 == A second gap
 
 Entrepreneurs, folk devils and panic are studied as *three objects with three
-literatures*; their interaction is described rather than formalised.
+literatures*; nobody formalises their interaction.
 
 - Networked-panic research moved past the mass-mediated model, but entrepreneur and
-  folk devil are often kept as *statuses* rather than positions in a contest
+  folk devil are often kept as *fixed statuses*
 - Stigmatised groups routinely act as entrepreneurs of their own defence
   (Mikhaylova 2022)
 - Discourse analysis, case studies and ego-network description are interpretively
@@ -70,8 +70,8 @@ literatures*; their interaction is described rather than formalised.
 
 == What a simulation buys
 
-Run the same population, the same network, the same initial draws --- with and
-without the campaign. The difference *is* disproportion, computed rather than argued.
+Run the same population, the same network, the same initial draws, with and without
+the campaign. The difference *is* disproportion, and this time it is computed.
 
 Alarm has two manufactured sources, and each can be switched off independently:
 
@@ -96,12 +96,12 @@ network structures; and once ignited, what sustains it?
 *Agents* on a static undirected graph. Each carries:
 
 / *Moral position* $b_i in [-1, 1]$: from the stigmatised pole to the dominant moral claim
-/ *Alarm* $a_i in [0, 1]$: perceived social danger --- *undirected*: how alarmed, not what is feared
+/ *Alarm* $a_i in [0, 1]$: perceived social danger. *Undirected*: how alarmed, not what is feared
 / *Threshold* $theta_i$: past it, the agent amplifies (heard $gamma$ times as loudly)
 
 *Two claims-makers outside the network.* $D$ pushes toward $+1$, $C$ toward $-1$.
-Neither is an agent, neither can be alarmed --- which is what makes the two sources
-of alarm separable.
+Neither is an agent, neither can be alarmed. Standing outside is what makes the two
+sources of alarm separable.
 
 The *folk devil is not an actor*: it is the stigmatised pole around which alarm and
 clustering emerge.
@@ -148,8 +148,8 @@ and in selecting *the same people repeatedly*.
 
 == Measuring panic: four runs on one seed
 
-Every setting is executed four times on the identical seed --- same network, same
-initial positions, same thresholds:
+Every setting is executed four times on the identical seed (same network, same
+initial positions, same thresholds):
 
 #align(center)[
   #table(
@@ -160,22 +160,22 @@ initial positions, same thresholds:
     table.hline(),
     table.header([run], [claims-making], [othering], [notation]),
     table.hline(stroke: 0.4pt),
-    [null], [off], [off], [$bar(a)^"null"$],
-    [claims only], [on], [off], [$bar(a)^"cm"$],
-    [othering only], [off], [on], [$bar(a)^"oth"$],
-    [full], [on], [on], [$bar(a)$],
+    [null], [off], [off], [$overline(a)^"null"$],
+    [claims only], [on], [off], [$overline(a)^"cm"$],
+    [othering only], [off], [on], [$overline(a)^"oth"$],
+    [full], [on], [on], [$overline(a)$],
     table.hline(),
   )
 ]
 
-$ bar(a) = underbrace(bar(a)^"null", "warranted") + underbrace(bar(a)^"cm" - bar(a)^"null", "claims alone") + underbrace(bar(a)^"oth" - bar(a)^"null", "othering alone") + underbrace(bar(a) - bar(a)^"cm" - bar(a)^"oth" + bar(a)^"null", "interaction") $
+$ overline(a) = underbrace(overline(a)^"null", "warranted") + underbrace(overline(a)^"cm" - overline(a)^"null", "claims alone") + underbrace(overline(a)^"oth" - overline(a)^"null", "othering alone") + underbrace(overline(a) - overline(a)^"cm" - overline(a)^"oth" + overline(a)^"null", "interaction") $
 
-The *interaction* is the object of interest: alarm that exists only because both are
-present. It is identically zero at $t = 1$, so it carries *no* initial dispersion.
+The *interaction* is what the design is for: alarm that exists only because both are
+present. It is identically zero at $t = 1$, so it contains *no* initial dispersion.
 
 == The panic index
 
-$ Pi(t) = (bar(a)(t) - bar(a)^"null"(t)) / (1 - bar(a)^"null"(t)) in [0, 1] $
+$ Pi(t) = (overline(a)(t) - overline(a)^"null"(t)) / (1 - overline(a)^"null"(t)) in [0, 1] $
 
 An *episode* = at least $W$ steps with $Pi >= Pi^*$ *and* $q >= q^*$, where $q$ is
 the share of the population past threshold.
@@ -249,18 +249,18 @@ brackets.
   )
 ]
 
-- `random` never clears the diagonal at any reach --- flat at $Pi slash rho approx 0.18$
+- `random` never clears the diagonal at any reach, flat at $Pi slash rho approx 0.18$
 - `fixed_random` traces `base` almost exactly, and carries *no degree signal at all*
 - *Schedule* is worth up to $7.0 times$; *degree* a further $2.2$–$2.5 times$, and only
   below $rho_D = 0.10$
 
 == H1 --- depth is a gate, reach is the dial
 
-- Below $alpha_D (1 - bar(b)) approx epsilon$ the entrepreneur *converts*: reached
-  agents stay audible, $bar(b) arrow 0.99$, interaction $= 0$. No reach ignites
+- Below $alpha_D (1 - overline(b)) approx epsilon$ the entrepreneur *converts*: reached
+  agents stay audible, $overline(b) arrow 0.99$, interaction $= 0$. No reach ignites
   anything.
 - Above it, $alpha_D$ stops mattering (0.70 / 0.80 / 0.90 within 0.02) and $rho_D$
-  takes over --- $Pi$ moves six-fold along a row.
+  takes over: $Pi$ moves six-fold along a row.
 - The gate is *bistable* between $alpha_D = 0.62$ and $0.68$: across-seed s.d.
   inflates $0.014 arrow 0.064$.
 
@@ -308,8 +308,8 @@ claims-making is intense enough to be *disowned*.
 - 97% of the othering exposure is over distance the campaign *created*
 - After withdrawal: *62% of $Pi$ still standing 250 steps later*
 
-*The registered ordering fails.* The interaction overtakes at $t = 2$ --- the earliest
-step permitted --- in 250/250 seeds and at every depth. An apportionment, not a
+*The registered ordering fails.* The interaction overtakes at $t = 2$ (the earliest
+step permitted) in 250/250 seeds and at every depth. An apportionment, not a
 chronology.
 
 == H2 --- what survives is othering, and only othering
@@ -322,12 +322,12 @@ chronology.
     - $omega$ sweep at fixed $mu + delta$: $Pi(399)$ rises monotonically
       $0.000 arrow 0.286$
     - Simplex scan: maximum sits *exactly* on the $omega$ vertex
-    - Sobol: the split carries $S_T = 0.99$, total intensity $0.03$
+    - Sobol: the split has $S_T = 0.99$, total intensity $0.03$
   ],
   [
     *Two audits that had to be run*
     - 4 of 45 simplex points are supercritical, all with
-      $mu + delta <= 0.60$ --- without excluding them the scan reads as a
+      $mu + delta <= 0.60$; without excluding them the scan reads as a
       *refutation*
     - Noise: over $zeta in [0, 0.05]$ the ordering *reverses*, $0.39$ against $0.75$
   ],
@@ -368,11 +368,11 @@ chronology.
 ]
 
 - Every configuration *raises* $Pi$ for 9–24 steps, then lowers it permanently
-- The largest overshoot belongs to the *lowest-reach* configuration #sym.arrow not the
-  cost channel, but the second one: pulling a tenth of the population to $-1$
-  maximises distance to a bulk sitting at $bar(b) = +0.29$
-- The reduction is *conversion, not reassurance*: $bar(b) arrow -0.99$,
-  $bar(Phi) arrow 0.005$
+- The largest overshoot belongs to the *lowest-reach* configuration #sym.arrow that
+  rules out the cost channel. What produces it is the second: pulling a tenth of the
+  population to $-1$ maximises distance to a bulk sitting at $overline(b) = +0.29$
+- The reduction is *conversion, not reassurance*: $overline(b) arrow -0.99$,
+  $overline(Phi) arrow 0.005$
 - A permanent floor $approx 0.18 rho_C$: linear in reach, flat in depth --- *the price
   of speaking*
 
@@ -394,17 +394,17 @@ chronology.
 
 == Three predictions for empirical work
 
-/ *Ignition is repetition, not reach*: The mass broadcaster is structurally the worst available entrepreneur. Fragmentation of audiences is a *mechanism*, not a background condition --- and the measurable quantity is the *concentration* of exposure, not its volume.
+/ *Ignition is repetition, not reach*: The mass broadcaster is structurally the worst available entrepreneur. Fragmentation of audiences is *itself a mechanism*, and the measurable quantity is the *concentration* of exposure.
 
 / *Local density decides permanence*: Two societies with identical claims-making, tolerance and alarm parameters differ in whether the panic outlives the campaign, according to how *clustered* their ties are. No synthetic generator produced this.
 
-/ *Answering back intensifies first*: And most when most committed. No tone, no provocation, no backlash psychology in the model --- just arithmetic on moral distance: the defence's own converts become the population's most distant neighbours.
+/ *Answering back intensifies first*: And most when most committed. No tone, no provocation, no backlash psychology in the model. Just arithmetic on moral distance: the defence's own converts become the population's most distant neighbours.
 
 == What the apportionment settles
 
 The elite-driven / interactionist dispute becomes a number: *14 : 2 : 84*.
 
-- The entrepreneur is *necessary* --- at $rho_D = 0$ nothing happens --- and nearly
+- The entrepreneur is *necessary* (at $rho_D = 0$ nothing happens) and nearly
   irrelevant to the *magnitude*
 - Its achievement is to divide the population far enough that alarm becomes
   self-sustaining, after which it can leave
@@ -449,8 +449,7 @@ and othering.
 
 == Takeaway
 
-The three transferable results are *negative in form*, which is what makes them
-useful:
+The three transferable results are *negative in form*:
 
 + Claims-making that reaches *everyone* cannot produce a panic --- manufactured
   division requires *unequal* exposure
@@ -494,8 +493,8 @@ $"Var"_i (sum_t g^D_i)$ at $rho_D = 0.10$ over 200 steps:
 ]
 
 3600 is the attainable maximum. `hub` is *less* concentrated than the control on
-every topology and still beats it at low reach --- which is what identifies degree as
-a second, independent channel rather than a re-description of the schedule.
+every topology and still beats it at low reach. That is what identifies degree as a
+second, independent channel, not a re-description of the schedule.
 
 == The tipping point is in the instrument
 
@@ -519,8 +518,7 @@ a second, independent channel rather than a re-description of the schedule.
 ]
 
 A step function applied to a smooth quantity with small variance *is* a step
-function. Empirical episode counts may inherit their sharpness from the coding rule
-rather than from the phenomenon.
+function. Empirical episode counts may inherit their sharpness from the coding rule.
 
 == Verification
 
@@ -561,6 +559,6 @@ destroy the counterfactual.
 
 The anchor is a restoring force toward each agent's *pre-campaign* position, which
 under a consensual start sits near zero. Any positive $sigma$ dissolves the
-manufactured division on its own timescale, whatever $omega$ is --- the reverse of
+manufactured division on its own timescale, whatever $omega$ is: the reverse of
 H2. Fixing it positive and leaving it outside the analysis would have handed the
 whole result to a constant nobody was looking at.
