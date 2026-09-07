@@ -14,6 +14,7 @@ implementation in [`../Code/`](../Code/).
 | [`limitations.md`](limitations.md) | Every scope condition, instrument limit, structural exclusion and scalability bound, with a transfer checklist |
 | [`roadmap.md`](roadmap.md) | What remains in code, in the specification and in compute — and the condition for calling this finished |
 | [`hypothesis_figures.ipynb`](hypothesis_figures.ipynb) | One figure per hypothesis, four panels each |
+| [`make_presentation_figures.py`](make_presentation_figures.py) | Slide figures: the twelve panels of the three paper figures cut into separate files, plus nine expository figures. Writes `../Presentation/figures/` |
 | `figures/` | The three figures at 300 dpi |
 | `data/` | Raw output of `../Code/run_hypotheses.py` and `run_appendix.py`; the notebook reads these and does not re-simulate |
 
@@ -33,6 +34,16 @@ cd Code && python run_hypotheses.py --seeds 250
 `Results/data/*.json`. Pass `--seeds 20` for a 4-minute pilot — every point estimate here
 matched that pilot to within 0.01, and the 250 seeds buy only the incidence tables, whose
 standard error they bring from ±0.11 to ±0.032 (spec §12.1).
+
+Figures for the talk (seconds, reads `data/` and never re-simulates the sweeps):
+
+```bash
+cd Results && python3 make_presentation_figures.py
+```
+
+Writes `Presentation/figures/{panels,concepts}/` as PDF and PNG, plus headline-free
+copies under `figures/untitled/` that `Presentation/Presentation_final.typ` uses, so a
+slide heading and its figure never state the same claim twice.
 
 ```bash
 cd Code && python fetch_empirical_network.py ego-facebook && python fetch_empirical_network.py ca-grqc && python run_appendix.py --seeds 10

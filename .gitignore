@@ -7,6 +7,11 @@
 # Regenerate with Results/hypothesis_figures.ipynb.
 !Results/figures/*.pdf
 
+# ...and the slide figures, for the same reason: Presentation_final.typ embeds
+# them as vector art. Regenerate with Results/make_presentation_figures.py.
+!Presentation/figures/*/*.pdf
+!Presentation/figures/untitled/*/*.pdf
+
 # Typst cache
 .typst/
 

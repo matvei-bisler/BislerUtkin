@@ -3,15 +3,15 @@
 // Agent-Based Modelling of "Moral Entrepreneurship" and the
 // Dynamics of Moral Panics in Social Networks
 //
-// Bibliographies:  ../Moral Panic.bib           (Zotero export, substantive)
-//                  ../Computational Methods.bib (Zotero export, methods)
+// Bibliographies:  Moral Panic.bib           (Zotero export, substantive)
+//                  Computational Methods.bib (Zotero export, methods)
 // Citation style:  american-sociological-association.csl (this folder)
 //
 // Spelling: British ("modelling", "defence", "recognise"), following the title.
 // Self-contained: no deposit, no pointers outside this text. One appendix (notation).
 //
-// Compile from the repository root (the figures live outside this folder):
-//   typst compile --root . Text/conference_paper.typ
+// Self-contained folder: all assets sit next to this file (Typst web app ready).
+//   typst compile conference_paper.typ
 // ============================================================
 
 #set page(
@@ -263,7 +263,7 @@ A moral panic is a reaction out of proportion to its cause, and the model's coun
 Which curves lie on top of one another tells us where the amplification comes from. `fixed_random` traces `base` almost exactly across the whole sweep, and those two repertoires have nothing whatever in common except that each addresses a settled audience. One picks the people who already agree with the campaign; the other picks its audience by coin-flip at the start and never revisits the choice. Since the second knows nothing about who anybody is, whatever the two share cannot be a property of the people chosen. What amplifies is reaching _the same_ people repeatedly; whether they are also the right people is a separate question, taken up in the next paragraph. In substantive terms, a campaign turns into a panic by working on a fixed constituency, and how many people it persuades matters far less. Repetition on the same audience opens a gap between that audience and everyone else, and the gap does the alarming.
 
 #figure(
-  image("../Results/figures/fig1_h1_ignition.pdf", width: 100%),
+  image("fig1_h1_ignition.pdf", width: 100%),
   caption: [Ignition. (a) how much panic each of the four repertoires produces as its reach grows, on the small world, with the diagonal $Pi = rho_D$ drawn in: a curve above that line is a reaction larger than the campaign that caused it. (b) the same for `hub` alone across the three network types, with `random` repeated as a light reference, which isolates what topology does. (c) manufactured division (the interaction term) against reach, circles marking each peak, showing that it rises, peaks and then disappears. (d) $Pi$ across every combination of depth $alpha_D$ and reach $rho_D$, darker being higher, with the heavy rule drawn where a reached agent's one-step move $alpha_D (1 - overline(b))$ crosses the tolerance $epsilon = 0.5$: below that rule the campaign persuades, above it the campaign divides. All four panels read $Pi$ at $t = 199$. Mean over 250 seeds; bands are $plus.minus 1$ standard deviation across seeds.],
 ) <fig:h1>
 
@@ -325,7 +325,7 @@ The registered _ordering_, however, fails. The interaction overtakes claims-alon
 The division outlives the entrepreneur that made it. Claims-alone falls to zero within five steps of withdrawal, and 250 steps later $Pi$ retains 62 per cent of its value at withdrawal; in 210 of the 250 seeds it was still elevated when the run ended, so those persistence figures are lower bounds on the true durations. The floor is made of othering and nothing else. Raising the othering weight while holding the other two fixed, so that the population's total capacity for alarm cannot change, moves what remains 250 steps after withdrawal from exactly zero to $0.286$; panel (b) of @fig:h2 puts the two moments side by side, $Pi$ at withdrawal and $Pi$ 250 steps later, against $omega$. Where disagreement is not itself experienced as danger, the episode ends with the campaign; where it is, the campaign is no longer needed.
 
 #figure(
-  image("../Results/figures/fig2_h2_handover.pdf", width: 100%),
+  image("fig2_h2_handover.pdf", width: 100%),
   caption: [Handover. (a) the four terms of @eq:decomp through the run, the dotted vertical marking the entrepreneur's withdrawal and the arrow the 5.94-to-one ratio of interaction to claims-alone; the gap between those two curves is the finding. (b) how much panic there is at withdrawal, and how much is still there 250 steps later, plotted against the othering weight $omega$ with $mu + delta$ held fixed, so that only the mix changes and not the population's total capacity for alarm. (c) what survives to the end of the run, $Pi(399)$, at each of 45 points on the triangle of alarm splits described in Section 2.4, the circle marking the maximum and the crosses the four points discarded for failing the sub-criticality probe. (d) total-order Sobol indices for the three reparameterised inputs, the share of the variation each is responsible for, with a pair of bars per input for the two outcomes: how much panic persists, and when the transfer happens. Almost everything sits on one input, the othering-versus-contagion balance.],
 ) <fig:h2>
 
@@ -348,7 +348,7 @@ What does the stigmatised side achieve by answering back? We had committed in ad
 The ordering of the three configurations carries the substance. The largest overshoot belongs to narrow and deep, the configuration with the lowest reach and therefore the smallest immediate cost, which rules out the first channel. The second channel produces it: pulling agents toward $p_C$ narrows moral distance only if it moves them toward the population's bulk, and at withdrawal the bulk sits at $overline(b) = +0.29$. Taking a tenth of the population to $-1$ in a single step does the opposite, driving mean othering exposure from $0.190$ to $0.309$ and $Pi$ to $0.467$, 61 per cent above what the panic would have been had nobody answered back. The defence of the stigmatised position, mounted intensively on a small base, is briefly the most panic-generating act in the study. The gate at work is the one that governs ignition, operated from the other side: $alpha_C = 0.15$ never exceeds tolerance and $overline(Phi)$ falls immediately, while $alpha_C = 0.90$ severs ties on contact and cleaves the population again before healing it.
 
 #figure(
-  image("../Results/figures/fig3_h3_defense.pdf", width: 100%),
+  image("fig3_h3_defense.pdf", width: 100%),
   caption: [Defence. (a) $Pi$ through $C$'s entry, for the three defended configurations and the undefended baseline. (b) each defended configuration with the baseline subtracted, so that zero is "the defence changed nothing" and the marked crossings are where it starts to help. (c) each run as a path across the $(overline(b), Pi)$ plane, from withdrawal (star) to the horizon (dot), which shows the fall in panic arriving together with the conversion of the population. (d) what is left at the horizon, $Pi(399)$, plotted against each of $C$'s two levers one at a time, with the guide $Pi = 0.18 rho_C$ drawn in. Mean over 250 seeds, 125 in panel (d).],
 ) <fig:h3>
 
@@ -497,7 +497,7 @@ govern how they behave.
 // ─────────────────────────────────────────────────────────────────────────────
 
 #bibliography(
-  ("../Moral Panic.bib", "../Computational Methods.bib"),
+  ("Moral Panic.bib", "Computational Methods.bib"),
   style: "american-sociological-association.csl",
   title: "References",
 )
